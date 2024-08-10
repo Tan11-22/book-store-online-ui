@@ -10,7 +10,15 @@ import ChiTietGioHang from './pages/GioHang/ChiTietGioHang';
 import Admin from './pages/Admin/Admin';
 import Login from './pages/Login/Login';
 import SearchPage from './pages/SearchPage/SearchPage';
-
+import DonNhapSach from './pages/Admin/DonNhapSach';
+import InfoKhachHang from './pages/InfoPage/InfoKhachHang';
+import DonMuaSach from './pages/InfoPage/DonMuaSach';
+import GiaSach from './pages/Admin/GiaSach';
+import PhieuNhap from './pages/Admin/PhieuNhap';
+import ReturnPay from './components/Payment/ReturnPay';
+import DoanhThu from './pages/Admin/DoanhThu';
+import InforNV from './pages/Admin/InforNV';
+import PageSachBanChay from './pages/Home/PageSachBanChay';
 
 
 export default function BookStore() {
@@ -25,9 +33,17 @@ export default function BookStore() {
           <Route path="sach/:isbn" element={<SachOverview/>} /> 
           <Route path="gio-hang" element={<ChiTietGioHang/>} /> 
           <Route path="tim-kiem" element={<SearchPage/>} /> 
-
+          <Route path="top-sach-ban-chay" element={<PageSachBanChay/>} /> 
+          <Route path="thong-tin" element={<InfoKhachHang/>}/>
+          <Route path="don-mua-sach" element={<DonMuaSach/>}/>
+          <Route path="pay-return" element={<ReturnPay/>}/>
 
           <Route path="admin" element={<Admin/>} /> 
+          <Route path="admin/don-nhap" element={<DonNhapSach/>} /> 
+          <Route path="admin/gia-sach" element={<GiaSach/>} /> 
+          <Route path="admin/phieu-nhap" element={<PhieuNhap/>} /> 
+          <Route path="admin/doanh-thu" element={<DoanhThu/>} /> 
+          <Route path="admin/thong-tin" element={<InforNV/>} /> 
         </Route>
       </Routes>
     </BrowserRouter>

@@ -66,3 +66,22 @@ export const timSach = async (search,start,size) => {
       throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
     }
 }
+
+
+
+export const demSoLuongSachTimRa = async (search) => {
+  // const user = "nva"
+  try {
+      const response = await api.get(`${SACH_SERVICE}sach/tong-sl-sach-tim`, {
+        params: {
+          "search": search
+        }
+      });
+      console.log(response.data);
+      return response.data; // Trả về dữ liệu từ API
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
+    }
+}
+

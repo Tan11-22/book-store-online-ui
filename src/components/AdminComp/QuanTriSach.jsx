@@ -1,14 +1,24 @@
 import React ,{useState, useEffect}from 'react'
 import ModalsSach from './ModalsSach'
 import { layDSSachQT, layTCNXB, layTCTG, layTCTL } from '../../context/QuanTriSach'
+import ModalsChiTietSach from './ModalsChiTietSach'
 function QuanTriSach() {
-    const data = [1,2,3,4,5,6,7,8,9,10]
+    // const data = [1,2,3,4,5,6,7,8,9,10]
     const [openModalsSach,setOpenModalsSach] = useState(false)
-
+    const [openModalsCTSach,setOpenModalsCTSach] = useState(false)
+    const [dataSachClick,setDataSachClick] = useState()
     const [dataSach,setDataSach] = useState([])
     const [dataTG, setDataTG] = useState([])
     const [dataTL, setDataTL] = useState([])
     const [dataNXB, setDataNXB] = useState([])
+    const [search, setSearch] = useState('')
+
+    const handleOpenCTSach = (sach) =>{
+        setDataSachClick(sach)
+        setOpenModalsCTSach(true)
+    }
+
+
     useEffect (
         () => {
             const fetchData = async () => {
@@ -22,6 +32,31 @@ function QuanTriSach() {
               fetchData(); 
         }
         ,[])
+        const handleKeyDown = (event) => {
+            if (event.key === 'Enter') {
+                const fetchData = async () => {
+                    try {
+                      const result = await layDSSachQT(search);
+                      setDataSach(result.data)
+                    } catch (error) {
+                      console.log(error)
+                    }
+                  };
+                  fetchData(); 
+            }
+          }
+    const handleSearch = (event) => {
+        event.preventDefault();
+        const fetchData = async () => {
+            try {
+              const result = await layDSSachQT(search);
+              setDataSach(result.data)
+            } catch (error) {
+              console.log(error)
+            }
+          };
+          fetchData(); 
+    }
     useEffect (
             () => {
                 const fetchData = async () => {
@@ -81,6 +116,9 @@ function QuanTriSach() {
                     <div className="relative h-10 w-full min-w-[200px]">
                         
                         <input
+                        value = {search}
+                        onChange={(e)=>setSearch(e.target.value)}
+                        onKeyDown={(e)=>handleKeyDown(e)}
                         className="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 !pr-9 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200"
                         placeholder="Tìm kiếm" />
                         {/* <label
@@ -91,7 +129,8 @@ function QuanTriSach() {
                     </div>
                     <button
                     className="flex select-none items-center gap-3 rounded-lg bg-orrange-500 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-black shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    type="button">
+                    type="button"
+                    onClick={(event)=>handleSearch(event)}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" aria-hidden="true" className="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -104,18 +143,16 @@ function QuanTriSach() {
                     type="button"
                     onClick={()=>setOpenModalsSach(true)}
                     >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                        aria-hidden="true" className="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3">
-                        </path>
+                   <svg class="w-6 h-6 text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M7 2a2 2 0 0 0-2 2v1a1 1 0 0 0 0 2v1a1 1 0 0 0 0 2v1a1 1 0 1 0 0 2v1a1 1 0 1 0 0 2v1a1 1 0 1 0 0 2v1a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H7Zm3 8a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm-1 7a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3 1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1Z" clip-rule="evenodd"/>
                     </svg>
+
                     Thêm mới 
                     </button>
                 </div>
                 </div>
             </div>
-            <div className="p-2 px-0 overflow-scroll h-[87vh]">
+            <div className="p-2 px-0 overflow-scroll h-[85vh]">
                 <table className="w-full text-left table-auto min-w-max">
                 <thead>
                     <tr>
@@ -131,7 +168,7 @@ function QuanTriSach() {
                     </th>
                     <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
                         <p className="block font-sans text-sm antialiased font-bold leading-normal text-black">
-                        số lượng
+                        Số lượng
                         </p>
                     </th>
                     <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
@@ -188,12 +225,16 @@ function QuanTriSach() {
                         </p>
                     </td>
                     <td className="p-4 border-b border-blue-gray-50">
+                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-black">
                         {val.tenNhaXuatBan}
+                        </p>
                     </td>
                     <td className="p-4 border-b border-blue-gray-50">
                         <button
                         className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                        type="button">
+                        type="button"
+                        onClick={()=>handleOpenCTSach(val)}
+                        >
                         <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
                             className="w-4 h-4">
@@ -216,6 +257,7 @@ function QuanTriSach() {
             </div>
             </div>
             <ModalsSach open={openModalsSach} onClose={()=>setOpenModalsSach(false)} dataTG={dataTG} dataTL={dataTL} dataNXB={dataNXB}/>
+            <ModalsChiTietSach open={openModalsCTSach} onClose={()=>setOpenModalsCTSach(false)} data={dataSachClick}/>
     </div>
   )
 }

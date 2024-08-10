@@ -3,7 +3,7 @@ import { formatCurrency } from '../../context/utility'
 import { useNavigate } from 'react-router-dom';
 import { themSachVaoGH } from '../../context/SachService';
 
-function CardSach({data, openAlert}) {
+function CardSach({data, openAlert, refresh}) {
     const navigate = useNavigate()
 
   
@@ -13,7 +13,12 @@ function CardSach({data, openAlert}) {
 
     const themVaoGioHang = (isbn,soLuong) => {
       const username = localStorage.getItem('username')
-      if (username === null || username==='') navigate("/login")
+      if (username === null || username==='') 
+        {
+          navigate("/login")
+          return
+        }
+
         const fetchData1 = async () => {
             try {
               const result = await themSachVaoGH(username,isbn,soLuong);
@@ -21,6 +26,7 @@ function CardSach({data, openAlert}) {
               if (result.code === 200) {
                 openAlert(result.status)
                 console.log("check alert")
+                refresh()
               }
             } catch (error) {
               console.log(error)
@@ -40,16 +46,28 @@ function CardSach({data, openAlert}) {
                 alt="card-image" className="object-cover w-full h-full" />
             </div>
             <div className="p-6">
-            <p className="min-h-14 block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+            <p className="min-h-14 block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900 ">
                     {data.tenSach}
                 </p>
                 <div className="flex items-center justify-between mb-2 min-h-7">
-                <p className="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
-                    {formatCurrency(data.giaBan)}
-                </p>
-                <p className="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
-                    {formatCurrency(data.giaGiam) || ""}
-                </p>
+                  {
+                  data.giaGiam? (
+                    <>
+                    <p className="block font-sans text-base antialiased font-medium leading-relaxed line-through text-blue-gray-900 opacity-55">
+                        {formatCurrency(data.giaBan)}
+                    </p>
+                    <p className="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+                        {formatCurrency(data.giaGiam)}
+                    </p>
+                  </>
+                    ) : (
+                      <p className="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+                        {formatCurrency(data.giaBan)}
+                    </p>
+                    )
+                  
+                }
+                
                 </div>
                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-black opacity-75 min-h-6">
                     {data.tenTacGia}

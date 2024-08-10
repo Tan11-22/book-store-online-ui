@@ -1,13 +1,24 @@
 import React,{useEffect, useState} from 'react'
-import { datMuaSach, getChiTietGioHang, xoaSach } from '../../context/GioHangService'
+import { datMuaSach, getChiTietGioHang, taoThanhToan, xoaSach } from '../../context/GioHangService'
 import { formatCurrency } from '../../context/utility'
+import Alert from '../Alert/Alert'
+import { useNavigate } from 'react-router-dom';
 
 
-function GioHang() {
+function GioHang({refresh}) {
+    const navigate = useNavigate()
     const [sachs, setSachs] = useState([])
     const [loading, setLoading] = useState(true)
     const username = localStorage.getItem("username")
+    const [diaChiGiaoHang, setDiaChiGiaoHang] = useState('')
+    const [phuongThucThanhToan, setPhuongThucThanhToan] = useState('0')
+    const [errorDCG,setErrorDCG] = useState('')
 
+    const [alertMessage, setAlertMessage] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+
+    const [errorDH, setErrorDH] = useState('')
+    // const [refresh,setRefresh] = useState(false)
     useEffect(
         () => {
             const fetchData = async () => {
@@ -29,6 +40,9 @@ function GioHang() {
             try {
               const result = await xoaSach(idGioHang)
               setSachs(sachs.filter(sach => sach.idGioHang !== idGioHang))
+              if(result.code === 200) {
+                refresh()
+              }
             } catch (error) {
               console.log(error)
             }
@@ -48,7 +62,7 @@ function GioHang() {
     const handleCheckboxChange = (id) => {
         setSachs(prevBooks =>
             prevBooks.map(book =>
-                book.idGioHang === id ? { ...book, selected: !book.selected } : book
+                (book.idGioHang === id &&  book.soLuong > 0)? { ...book, selected: !book.selected } : book
             )
         );
     };
@@ -64,21 +78,71 @@ function GioHang() {
 
 
     const handleDatHang = () => {
-        const dataToSend = {
-            "sachs": sachs,
-          };
-        const fetchData = async () => {
-            try {
-              const result = await datMuaSach(dataToSend)
-                // setSachs(result.data)
-                // setLoading(false)
-                console.log(result)
-            } catch (error) {
-              console.log(error)
-            }
-          }
-          fetchData() 
+        if(diaChiGiaoHang.trim()==='') {
+            setErrorDCG("Không thể bỏ trống!")
+            return
+        } else {
+            setErrorDCG("")
+        }
+            const dataToSend = {
+                "gioHangList": sachs.filter(book => book.selected),
+                "diaChi": diaChiGiaoHang,
+                "hinhThucThanhToan": phuongThucThanhToan,
+                "tenDangNhap": localStorage.getItem('username')
+              };
+    
+            const fetchData = async () => {
+                try {
+                  const result = await datMuaSach(dataToSend)
+                  if(result.code ===201) {
+                    setErrorDH(result.status)
+                    const response = result.data
+                    setSachs(prevBooks =>
+                        prevBooks.map(book =>
+                        book.idGioHang === response.idGioHang ? { ...book, soLuong: response.soLuong, selected: !book.selected } : book
+                    ))
+                    }
+                    if(result.code ===200 ) {
+                        if(phuongThucThanhToan==='1') {
+                            const dataThanhToan = {
+                                "tenDangNhap": localStorage.getItem('username'),
+                                "amount": totalAmount
+                            }
+                            const fetchData1 = async () => {
+                                try {
+                                  const result = await taoThanhToan(dataThanhToan)
+                                  window.location.href = result.url;
+                                } catch (error) {
+                                  console.log(error)
+                                }
+                              }
+                              fetchData1() 
+                        }
+                        else {
+                            navigate("/don-mua-sach")
+                        }
+                    }
+                    
+                 
+                    // console.log(result)
+                } catch (error) {
+                  console.log(error)
+                }
+              }
+              fetchData() 
+            
+        
     }
+
+    const closeAlert = () => {
+        setShowAlert(false);
+      };
+  
+      const openAlert = (mess) => {
+        setAlertMessage(mess);
+        setShowAlert(true);
+      }
+
     if (loading) return null
   return (
     <div>
@@ -86,6 +150,7 @@ function GioHang() {
         <div className='grid grid-cols-3 gap-x-4 max-w-7xl mx-auto px-2 '>
             <div className='bg-white p-6 px-0 col-span-2 rounded-lg'>
                 <h1 className='text-lg font-bold pl-3'>Giỏ hàng:</h1>
+                {errorDH && <p className="text-red-600 mt-2 pl-3">{errorDH}</p>}
                 <table className="w-full mt-4 text-left table-auto min-w-max">
                 <thead>
                     <tr>
@@ -128,11 +193,13 @@ function GioHang() {
                                 return (
                                     <tr key={key}>
                                     <td class="p-4">
+                                        {val.soLuong > 0 ?
                                         <input
-                                            type="checkbox"
-                                            checked={val.selected}
-                                            onChange={() => handleCheckboxChange(val.idGioHang)}
+                                        type="checkbox"
+                                        checked={val.selected}
+                                        onChange={() => handleCheckboxChange(val.idGioHang)}
                                         />
+                                        : <></>}
                                     </td>
                                     <td class="p-4 ">
                                         <div class="flex items-center gap-3">
@@ -218,6 +285,8 @@ function GioHang() {
                 </div>
                 <div class="relative h-12 w-80 mx-auto mt-5">
                     <select
+                    value={phuongThucThanhToan}
+                    onChange={(e) => setPhuongThucThanhToan(e.target.value)}
                         class="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-black outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-gray-900 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-black">
                         <option value="0">Thanh toán trực tiếp</option>
                         <option value="1">Thanh toán online qua VNpay</option>
@@ -232,11 +301,16 @@ function GioHang() {
                     </label>
                 </div>
                 <div class="relative h-11 w-80 mx-auto mt-5">
-                    <input placeholder="Static"
-                    class="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-black outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" />
+               
+                    <input placeholder=""
+                    class="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm 
+                    font-normal text-black outline outline-0 transition-all placeholder-shown:border-blue-gray-200 
+                    focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" 
+                    value={diaChiGiaoHang}
+                    onChange={(e)=>setDiaChiGiaoHang(e.target.value)}/>
                     <label
                     class="after:content[' '] pointer-events-none absolute left-0  -top-2.5 flex h-full w-full select-none !overflow-visible truncate text-sm font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-2.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-gray-500 after:transition-transform after:duration-300 peer-placeholder-shown:leading-tight peer-placeholder-shown:text-blue-gray-500 peer-focus:text-sm peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-gray-900 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                    Địa chỉ giao sách:
+                    Địa chỉ giao sách:  {errorDCG && <p className="text-red-600 ml-2">{errorDCG}</p>}
                     </label>
                 </div>
                 <div className="p-3 pt-0 w-80 mt-5 mx-auto">
@@ -245,6 +319,7 @@ function GioHang() {
                 hover:shadow-gray-900/20 block w-full bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none "
                 type="button"
                 onClick={()=> handleDatHang()}
+                disabled={selectedCount === 0}
                 >
                 Đặt hàng
                 </button>
@@ -252,6 +327,7 @@ function GioHang() {
             </div>
         </div>
       </div>
+      {showAlert && <Alert message={alertMessage} onClose={closeAlert} />}
     </div>
   )
 }

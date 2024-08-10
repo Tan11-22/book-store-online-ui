@@ -1,7 +1,8 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import GioHang from '../../components/GioHang/GioHang'
 import Navbar from '../../components/navbar/Navbar'
 import { useNavigate } from 'react-router-dom';
+import Footer from '../../components/Footer/Footer';
 
 
 function ChiTietGioHang() {
@@ -20,11 +21,16 @@ function ChiTietGioHang() {
     
     ,[]
   )
-  
+  const [refresh, setRefresh] = useState(false)
+
+    const handleRefreshGH = () => {
+        setRefresh(!refresh)
+    }
   return (
     <div>
-       <Navbar/>
-       <GioHang/>
+       <Navbar refresh={refresh}/>
+       <GioHang refresh={handleRefreshGH}/>
+       <Footer/>
     </div>
   )
 }

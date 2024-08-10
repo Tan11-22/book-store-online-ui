@@ -3,7 +3,7 @@ import Chip from './Chip'
 import ChipImage from './ChipImage'
 import { themSachQT } from '../../context/QuanTriSach'
 
-function ModalsSach({open, onClose, refresh, dataTG, dataTL, dataNXB}) {
+function ModalsSach({open, onClose, dataTG, dataTL, dataNXB}) {
     const handleClose = () => {
         onClose()
       }

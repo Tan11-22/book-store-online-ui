@@ -41,3 +41,54 @@ export const xoaSach = async (idGioHang) => {
         throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
       }
   }
+  export const taoThanhToan = async (data) => {
+    // for (let [key, value] of formData.entries()) {
+    //     console.log(key, value);
+    // }
+    try {
+        const response = await api.post(`${SACH_SERVICE}payment/create_payment`,data);
+        console.log(response.data);
+        return response.data; // Trả về dữ liệu từ API
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
+      }
+  }
+
+
+  export const getDanhSachDonMua = async () => {
+    // for (let [key, value] of formData.entries()) {
+    //     console.log(key, value);
+    // }
+    try {
+        const response = await api.get(`${SACH_SERVICE}don-mua-sach/ds`, {
+          params: {
+            "tdn": localStorage.getItem("username")
+          }
+        });
+        console.log(response.data);
+        return response.data; // Trả về dữ liệu từ API
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
+      }
+  }
+
+
+  
+export const updateTrangThaiDonMua = async (tt) => {
+    const data = {
+          "tdn": localStorage.getItem("username"),
+            "trangThai": tt
+    }
+    try {
+        const response = await api.post(`${SACH_SERVICE}don-mua-sach/cap-nhat-don-mua`, data);
+        console.log(response.data);
+        return response.data; // Trả về dữ liệu từ API
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
+      }
+  }
+
+

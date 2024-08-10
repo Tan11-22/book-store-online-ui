@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-function ChiTietSach({maSach, openAlert}) {
+function ChiTietSach({maSach, openAlert, refresh}) {
   const navigate = useNavigate()
 
   const [image, setImage] = useState('img1')
@@ -32,14 +32,13 @@ function ChiTietSach({maSach, openAlert}) {
         const fetchData = async () => {
             try {
               const result = await getChiTietSach(maSach);
-              // setDataSach(result.data)
               console.log(result.data)
               setSach(result.data.sachDTO)
               setTacGias(result.data.tacGias)
               setTheLoais(result.data.theLoais)
               setHinhAnhs(result.data.hinhAnhs)
               if(result.code ===200) {
-                setImage(hinhAnhs[0]?hinhAnhs[0].filename:"default.png")
+                setImage(result.data.hinhAnhs[0]?result.data.hinhAnhs[0].filename:"default.png")
                 setLoading(false)
               }
               
@@ -62,6 +61,7 @@ function ChiTietSach({maSach, openAlert}) {
           if (result.code === 200) {
             openAlert(result.status)
             console.log("check alert")
+            refresh()
           }
         } catch (error) {
           console.log(error)
@@ -124,9 +124,26 @@ function ChiTietSach({maSach, openAlert}) {
                           {sach.tenSach}
                         </h2>
                         <div className="flex flex-col sm:flex-row sm:items-center mb-6">
-                            <h6
-                                class="font-manrope font-semibold text-2xl leading-9 text-gray-900 pr-5 sm:border-r border-gray-200 mr-5">
-                                {sach.giaBan?formatCurrency(sach.giaBan):"Chưa cập nhật giá"}</h6>
+                            {sach.giaGiam?(
+                              <>
+                                <h6
+                                  class="font-manrope font-semibold text-2xl leading-9 text-gray-900 pr-5 line-through border-gray-200 mr-5 opacity-55">
+                                  {sach.giaBan?formatCurrency(sach.giaBan):"Chưa cập nhật giá"}
+                                  
+                                </h6>
+                                <h6
+                                  class="font-manrope font-semibold text-2xl leading-9 text-gray-900 pr-5 sm:border-r border-gray-200 mr-5">
+                                  {sach.giaBan?formatCurrency(sach.giaGiam):"Chưa cập nhật giá"}
+                                  
+                                </h6>
+                              </>
+                            ):(
+                              <h6
+                                  class="font-manrope font-semibold text-2xl leading-9 text-gray-900 pr-5 sm:border-r border-gray-200 mr-5">
+                                  {sach.giaBan?formatCurrency(sach.giaBan):"Chưa cập nhật giá"}
+                                  
+                                </h6>
+                            )}
                             <div className="flex items-center gap-2">
                                 {/* <div className="flex items-center gap-1">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -231,7 +248,7 @@ function ChiTietSach({maSach, openAlert}) {
                                     </path> <circle cx="12" cy="12" r="10" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></circle> 
                                     </g></svg>
                                 <span class="font-normal text-base text-gray-900 ">
-                                  <strong>Trọng lượng:</strong> {sach.trongLuong|| "Đang cập nhật"}
+                                  <strong>Trọng lượng:</strong> {sach.trongLuong|| "Đang cập nhật"} gram
                                   </span>
                             </li>
                             <li class="flex items-center gap-3">
@@ -258,7 +275,7 @@ function ChiTietSach({maSach, openAlert}) {
                                     </path> <circle cx="12" cy="12" r="10" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></circle> 
                                     </g></svg>
                                 <span class="font-normal text-base text-gray-900 ">
-                                <strong>Tác giả: </strong> {sach.maNhaXuatBan} {sach.tenNhaXuatBan}
+                                <strong>Nhà xuất bản: </strong> {sach.maNhaXuatBan} {sach.tenNhaXuatBan}
                                 </span>
                             </li>
                             <li class="flex items-center gap-3">
@@ -332,6 +349,13 @@ function ChiTietSach({maSach, openAlert}) {
                         </div>
                         </div>
         </div>
+      </div>
+      <div className='max-w-7xl mx-auto px-2 bg-white rounded-lg mt-2 h-64'>
+        <h3 className="text-gray-800 font-lg font-bold tracking-normal leading-tight  text-2xl py-2 px-4 mb-1 bg-white rounded-lg max-w-7xl mx-auto">
+            Thông tin mô tả</h3>
+          <p className='px-10'>
+          {sach.moTa}
+          </p>
       </div>
     </div>
   )
