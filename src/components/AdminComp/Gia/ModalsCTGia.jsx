@@ -213,11 +213,11 @@ function ModalsCTGia({open, onClose, refresh, data}) {
                         Ngày kết thúc
                         </p>
                     </th>
-                    <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
+                    {/* <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
                         <p className="block font-sans text-sm antialiased font-normal leading-none text-black opacity-70">
 
                         </p>
-                    </th>
+                    </th> */}
                     </tr>
                 </thead>
                 <tbody>
@@ -254,7 +254,7 @@ function ModalsCTGia({open, onClose, refresh, data}) {
                     {/* <td className="p-4 border-b border-blue-gray-50">
                         {val.tenNhaXuatBan}
                     </td> */}
-                    <td className="p-4 border-b border-blue-gray-50">
+                    {/* <td className="p-4 border-b border-blue-gray-50">
                         <button
                         className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                         type="button"
@@ -268,7 +268,7 @@ function ModalsCTGia({open, onClose, refresh, data}) {
                                         </svg>
                                         </span>
                         </button>
-                    </td>
+                    </td> */}
                                 </tr>
                               )
                             }

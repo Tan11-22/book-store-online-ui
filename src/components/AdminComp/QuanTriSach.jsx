@@ -1,7 +1,10 @@
-import React ,{useState, useEffect}from 'react'
+import React ,{useState, useEffect, useRef}from 'react'
 import ModalsSach from './ModalsSach'
 import { layDSSachQT, layTCNXB, layTCTG, layTCTL } from '../../context/QuanTriSach'
 import ModalsChiTietSach from './ModalsChiTietSach'
+import ReactToPrint from 'react-to-print';
+import ReportToPrint from './ReportToPrint';
+
 function QuanTriSach() {
     // const data = [1,2,3,4,5,6,7,8,9,10]
     const [openModalsSach,setOpenModalsSach] = useState(false)
@@ -12,12 +15,12 @@ function QuanTriSach() {
     const [dataTL, setDataTL] = useState([])
     const [dataNXB, setDataNXB] = useState([])
     const [search, setSearch] = useState('')
-
+    const [refresh, setRefresh] = useState(false)
     const handleOpenCTSach = (sach) =>{
         setDataSachClick(sach)
         setOpenModalsCTSach(true)
     }
-
+    const componentRef = useRef();
 
     useEffect (
         () => {
@@ -31,7 +34,7 @@ function QuanTriSach() {
               };
               fetchData(); 
         }
-        ,[])
+        ,[refresh])
         const handleKeyDown = (event) => {
             if (event.key === 'Enter') {
                 const fetchData = async () => {
@@ -96,7 +99,7 @@ function QuanTriSach() {
               fetchData(); 
         }
         ,[])   
-            
+
   return (
     <div>
         <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
@@ -110,6 +113,7 @@ function QuanTriSach() {
                     {/* <p className="block mt-1 font-sans text-base antialiased font-normal leading-relaxed text-gray-700">
                     These are details about the last transactions
                     </p> */}
+                    
                 </div>
                 <div className="flex w-full gap-2 shrink-0 md:w-max">
                     <div className="w-full md:w-72">
@@ -149,10 +153,27 @@ function QuanTriSach() {
 
                     Thêm mới 
                     </button>
+                    <ReactToPrint
+                        trigger={() => <button 
+                        className='flex select-none items-center gap-3 rounded-lg bg-orrange-500 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-black shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                        type='button'
+                        >
+                            <svg class="w-6 h-6 text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z"/>
+                            </svg>
+
+
+                            Tạo report</button>}
+                        content={() => componentRef.current}
+                    />
+                    <div className='hidden'>
+                    <ReportToPrint ref={componentRef} data={dataSach}/>
+                    </div>
                 </div>
                 </div>
             </div>
             <div className="p-2 px-0 overflow-scroll h-[85vh]">
+
                 <table className="w-full text-left table-auto min-w-max">
                 <thead>
                     <tr>
@@ -254,9 +275,10 @@ function QuanTriSach() {
 
                 </tbody>
                 </table>
+
             </div>
             </div>
-            <ModalsSach open={openModalsSach} onClose={()=>setOpenModalsSach(false)} dataTG={dataTG} dataTL={dataTL} dataNXB={dataNXB}/>
+            <ModalsSach open={openModalsSach} onClose={()=>setOpenModalsSach(false)} dataTG={dataTG} dataTL={dataTL} dataNXB={dataNXB} refresh={()=>setRefresh(!refresh)}/>
             <ModalsChiTietSach open={openModalsCTSach} onClose={()=>setOpenModalsCTSach(false)} data={dataSachClick}/>
     </div>
   )

@@ -3,7 +3,7 @@ import Chip from './Chip'
 import ChipImage from './ChipImage'
 import { themSachQT } from '../../context/QuanTriSach'
 
-function ModalsSach({open, onClose, dataTG, dataTL, dataNXB}) {
+function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
     const handleClose = () => {
         onClose()
       }
@@ -143,6 +143,10 @@ function ModalsSach({open, onClose, dataTG, dataTL, dataNXB}) {
         const fetchData = async () => {
             try {
               const result = await themSachQT(formData);
+              if(result.code ===200) {
+                refresh()
+                onClose()
+              }
               console.log(result)
             } catch (error) {
               console.log(error)
