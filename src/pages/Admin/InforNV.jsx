@@ -9,13 +9,13 @@ function InforNV() {
   useEffect(() => {
     if (role) {
       console.log(role)
-      if (role !== 'NHANVIEN') {
+      if (role == 'KHACHHANG') {
         return navigate("/");
       } 
     } else {
      return navigate("/login");
     }
-  })
+  },[])
   return (
     <div className='bg-zinc-300 flex gap-x-2'>
         <div><SlideBar/></div>

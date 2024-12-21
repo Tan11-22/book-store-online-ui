@@ -7,15 +7,18 @@ function DoanhThu() {
   const navigate = useNavigate()
   const role = localStorage.getItem('role')
   useEffect(() => {
-    if (role) {
-      console.log(role)
-      if (role !== 'NHANVIEN') {
-        return navigate("/");
-      } 
-    } else {
-     return navigate("/login");
-    }
-  })
+      if (role) {
+        console.log(role)
+        if (role == 'KHACHHANG') {
+          return navigate("/");
+        } 
+        else if (role == 'NHANVIEN') {
+          return navigate("/admin")
+        }
+      } else {
+       return navigate("/login");
+      }
+    },[])
   return (
     <div className='bg-zinc-300 flex gap-x-2'>
     <div><SlideBar/></div>

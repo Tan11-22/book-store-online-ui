@@ -6,6 +6,8 @@ function ModalsQuenMatKhau({open, onClose}) {
     const handleClose = () => {
         setUsername('')
         setEmail('')
+        setErEmail('')
+        setErUsername('')
         onClose()
       }
       const [username, setUsername] = useState('')
@@ -33,7 +35,7 @@ function ModalsQuenMatKhau({open, onClose}) {
               if(result.code === 200) {
                 openAlert(result.status)
                 const timer = setTimeout(() => {
-                  onClose();
+                  handleClose()
                 }, 5000); // 3000 milliseconds = 3 seconds
             
                 return () => clearTimeout(timer); // Clear the timeout if the component is unmounted

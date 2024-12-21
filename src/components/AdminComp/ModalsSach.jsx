@@ -5,6 +5,28 @@ import { themSachQT } from '../../context/QuanTriSach'
 
 function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
     const handleClose = () => {
+
+                setIsbn('')
+                setErrorISBN('')
+                setTenSach('')
+                setErrorTS('')
+                setKhuonKho('')
+                setSoTrang('')
+                setErrorST('')
+                setTrongLuong('')
+                setMoTa('')
+                setNXB('')
+                setErrorNXB('')
+    
+
+                setChips([])
+                setSelectedOption('')
+                setErrorTG('')
+                setTLChips([])
+                setSelectedOptionTL('')
+                setErrorTL('')
+                setSelectedFiles([])
+                setError('')
         onClose()
       }
 
@@ -172,16 +194,21 @@ function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
                         
 
 
-                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">ISBN(*)</label>
-                        {errorISBN && <p className="text-red-600 mt-2">{errorISBN}</p>}
+                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">ISBN(*)
+
+                        {errorISBN && <p className="text-red-600 italic">{errorISBN}</p>}
+                        </label>
+                       
                         <input id="name" className="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center 
                         pl-3 text-sm border-gray-300 rounded border" placeholder="ISBN" 
                         value={isbn}
                         onChange={(e) => setIsbn(e.target.value)}
                         type='text'/>
 
-                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Tên sách(*)</label>
-                        {errorTS && <p className="text-red-600 mt-2">{errorTS}</p>}
+                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Tên sách(*)
+                        {errorTS && <p className="text-red-600 italic">{errorTS}</p>}
+                        </label>
+                        
                         <input id="name" className="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center 
                         pl-3 text-sm border-gray-300 rounded border" placeholder="Tên sách" 
                         value={tenSach}
@@ -197,8 +224,10 @@ function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
                         type='text'
                         />
 
-                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Số trang(*)</label>
-                        {errorST && <p className="text-red-600 mt-2">{errorST}</p>}
+                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Số trang(*)
+                        {errorST && <p className="text-red-600 italic">{errorST}</p>}
+                        </label>
+                      
                         <input id="name" className="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center 
                         pl-3 text-sm border-gray-300 rounded border" placeholder="Số trang" 
                         value={soTrang}
@@ -216,8 +245,10 @@ function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
 
                       
 
-                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Nhà xuất bản(*)</label>
-                        {errorNXB && <p className="text-red-600 mt-2">{errorNXB}</p>}
+                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Nhà xuất bản(*)
+                        {errorNXB && <p className="text-red-600 italic">{errorNXB}</p>}
+                        </label>
+                        
                         <div>
                         <select
                             value={nxb}
@@ -236,8 +267,10 @@ function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
                         
 
 
-                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Tác giả(*)</label>
-                        {errorTG && <p className="text-red-600 mt-2">{errorTG}</p>}
+                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Tác giả(*)
+                        {errorTG && <p className="text-red-600 italic">{errorTG}</p>}
+                        </label>
+                   
                         <div className="max-w-lg mb-4">
                             <select
                             value={selectedOption}
@@ -269,8 +302,10 @@ function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
 
 
 
-                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Thể loại(*)</label>
-                        {errorTL && <p className="text-red-600 mt-2">{errorTL}</p>}
+                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Thể loại(*)
+                        {errorTL && <p className="text-red-600 italic">{errorTL}</p>}
+                        </label>
+                        
                         <div className="max-w-lg mb-4">
                             <select
                             value={selectedOptionTL}
@@ -301,7 +336,9 @@ function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
 
 
 
-                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Hình ảnh</label>
+                        <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Hình ảnh
+                        {error && <p className="text-red-500 italic">{error}</p>}
+                        </label>
                         <input
                             type="file"
                             accept="image/*"
@@ -310,7 +347,7 @@ function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
                             className="p-2 border rounded w-full"
                             />
 
-                        {error && <p className="text-red-500 mt-2">{error}</p>}
+                        
                         <div className="flex flex-wrap mt-4">
                             {selectedFiles.map((file, index) => (
                             <ChipImage key={index} file={file} onDelete={() => handleDeleteFileChip(file)} />
@@ -318,7 +355,7 @@ function ModalsSach({open, onClose,refresh, dataTG, dataTL, dataNXB}) {
                         </div> 
 
                         <label for="name" className="text-gray-800 text-sm font-bold leading-tight tracking-normal">Mô tả</label>
-                        <textarea id="name" className="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center h-20
+                        <textarea id="name" className="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-20 flex items-center 
                         pl-3 text-sm border-gray-300 rounded border" placeholder="Mô tả" 
                         value={moTa}
                         onChange={(e) => setMoTa(e.target.value)}

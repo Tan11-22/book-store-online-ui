@@ -4,7 +4,7 @@ function ChipImage({file, onDelete}) {
 
     const [imageSrc, setImageSrc] = useState(null);
     useEffect(() => {
-        if (file && onDelete) {
+        if (typeof file != 'string') {
           const objectUrl = URL.createObjectURL(file);
           setImageSrc(objectUrl);
     
@@ -15,9 +15,11 @@ function ChipImage({file, onDelete}) {
   return (
     <div
       data-dismissible="chip"
-      className="relative grid select-none items-center whitespace-nowrap rounded-lg bg-zinc-300 py-1.5 px-3 font-sans text-xs font-bold uppercase text-white mx-1 my-1 inline-block"
+      className="relative  select-none items-center whitespace-nowrap rounded-lg bg-zinc-300 py-1.5 px-3 font-sans text-xs font-bold uppercase text-white mx-1 my-1 inline-block"
     >
-        {imageSrc && <img src={imageSrc} alt={file.name} className="h-12 w-12 mr-5 rounded" />}
+        {imageSrc != null ? <img src={imageSrc} alt={file.name} className="h-12 w-12 mr-5 rounded" />
+        :  <img src={`http://localhost:8080/api/quan-ly-sach-service/hinh-anh/get?name=${file?file:"default.png"}`}
+        alt={file.name} className="h-12 w-12 mr-5 rounded" /> }
       {/* <span className="mr-5 p-3">{file.name}</span> */}
       {
         onDelete ?
@@ -34,8 +36,7 @@ function ChipImage({file, onDelete}) {
           </span>
         </button>
         :
-        <img src={`http://localhost:8080/api/quan-ly-sach-service/hinh-anh/get?name=${file?file:"default.png"}`}
-        alt={file.name} className="h-12 w-12 mr-5 rounded" />
+       <></>
       }
 
     </div>

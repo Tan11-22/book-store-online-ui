@@ -1,13 +1,21 @@
 import React, {useState, useEffect} from 'react'
 import { getChiTietDonNhapSach, taoPhieuNhapQT } from '../../../context/QuanTriSach'
 import { formatCurrency } from '../../../context/utility' 
+import Alert from '../../Alert/Alert'
 
-function ModalsTaoPhieuNhap({open, onClose, idDon}) {
-    const handleClose = () => {
-        onClose()
-    }
+function ModalsTaoPhieuNhap({open, onClose, idDon, refresh}) {
+
+    const [message, setMessage] = useState('')
+    const [typeAlert, setTypeAlert] = useState('success')
+    const [openAlert, setOpenAlert] = useState(false)
     const [dataDon,setDataDon] = useState()
     const [dataSach, setDataSach] = useState([])
+
+
+    const handleClose = () => {
+      // refresh()
+      onClose()
+  }
     useEffect (
         () => {
             const fetchData = async () => {
@@ -15,7 +23,13 @@ function ModalsTaoPhieuNhap({open, onClose, idDon}) {
                   const result = await getChiTietDonNhapSach(idDon);
                   if (result.code === 200) {
                     setDataDon(result.data.donNhapSachDTO)
-                    setDataSach(result.data.sachs)
+                    const filteredSachs = result.data.sachs.filter((sach) => sach.soLuong > 0);
+                    setDataSach(filteredSachs)
+                  }
+                  else {
+                    setMessage(result.status)
+                    setTypeAlert('error')
+                    setOpenAlert(true)
                   }
                   
                 } catch (error) {
@@ -25,8 +39,21 @@ function ModalsTaoPhieuNhap({open, onClose, idDon}) {
               fetchData(); 
         }
         ,[idDon])
+      const handleQuantityChange = (id, event) => {
+          const newQuantity = event.target.value;
+          setDataSach(prevBooks =>
+              prevBooks.map(book =>
+                  book.isbn === id ? { ...book, soLuongNhap: newQuantity } : book
+              )
+          );
+      }
+      const handleXoaSach = (id) => {
+    
+        setDataSach(dataSach.filter(sach => sach.isbn !== id))
+           
+    }
     const totalAmount = dataSach
-        .reduce((total, book) => total + parseInt(book.giaNhap*book.soLuong), 0)
+        .reduce((total, book) => total + parseInt(book.giaNhap*book.soLuongNhap), 0)
         const handleTaoPhieu = () => {
 
             const dataToSend = {
@@ -42,6 +69,7 @@ function ModalsTaoPhieuNhap({open, onClose, idDon}) {
                   const result = await taoPhieuNhapQT(dataToSend);
                 //   setDataSach(result.data)
                     if (result.code ===200) {
+                        refresh()
                         handleClose()
                     }
                 } catch (error) {
@@ -119,7 +147,7 @@ function ModalsTaoPhieuNhap({open, onClose, idDon}) {
 
 
                        
-                                    <div className="p-2 px-0 overflow-scroll h-[87vh]">
+                                    <div className="p-2 px-0">
                 <table className="w-full text-left table-auto min-w-max">
                 <thead>
                     <tr>
@@ -143,11 +171,11 @@ function ModalsTaoPhieuNhap({open, onClose, idDon}) {
                         Thành tiền
                         </p>
                     </th>
-                    {/* <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
+                    <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
                         <p className="block font-sans text-sm antialiased font-normal leading-none text-black opacity-70">
 
                         </p>
-                    </th> */}
+                    </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -177,20 +205,27 @@ function ModalsTaoPhieuNhap({open, onClose, idDon}) {
                         </p>
                     </td>
                     <td className="p-2 border-b border-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-black">
-                            {val.soLuong}
-                        </p>
+
+                        <input type='number' value={val.soLuongNhap}
+                                            onChange={(event) => handleQuantityChange(val.isbn, event)}
+                                            onKeyDown={(event) => event.preventDefault()} 
+                                            min={1}
+                                            max={val.soLuong}
+                                            className='w-10'
+                                            />
+                            {/* {val.soLuong} */}
+
                     </td>
                     <td className="p-4 border-b border-blue-gray-50">
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-black">
-                        {formatCurrency(val.giaNhap*val.soLuong)}
+                        {formatCurrency(val.giaNhap*val.soLuongNhap)}
                         </p>
                     </td>
-                    {/* <td className="p-4 border-b border-blue-gray-50">
+                    <td className="p-4 border-b border-blue-gray-50">
                         <button
                         className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                         type="button"
-                        // onClick={()=>handleXoaSach(val.isbn)}
+                        onClick={()=>handleXoaSach(val.isbn)}
                         >
                         <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                                         <svg  xmlns="http://www.w3.org/2000/svg"  className="icon icon-tabler icon-tabler-x" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -200,7 +235,7 @@ function ModalsTaoPhieuNhap({open, onClose, idDon}) {
                                         </svg>
                                         </span>
                         </button>
-                    </td> */}
+                    </td>
                                 </tr>
                               )
                             }
@@ -232,6 +267,7 @@ function ModalsTaoPhieuNhap({open, onClose, idDon}) {
                     </div>
                 </div>
             </div>
+            {openAlert && <Alert  message={message} onClose={()=>setOpenAlert(false)} type={typeAlert}/> }
     </div>
   )
 }

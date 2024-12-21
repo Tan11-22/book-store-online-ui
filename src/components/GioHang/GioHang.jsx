@@ -3,6 +3,8 @@ import { datMuaSach, getChiTietGioHang, taoThanhToan, xoaSach } from '../../cont
 import { formatCurrency } from '../../context/utility'
 import Alert from '../Alert/Alert'
 import { useNavigate } from 'react-router-dom';
+import { getDistrict, getFee, getProvince, getWard } from '../../context/ApiGHN';
+import ViewXacNhanDatHang from './ViewXacNhanDatHang';
 
 
 function GioHang({refresh}) {
@@ -18,12 +20,30 @@ function GioHang({refresh}) {
     const [showAlert, setShowAlert] = useState(false);
 
     const [errorDH, setErrorDH] = useState('')
+    const [dataProvince, setDataProvince] = useState([])
+    const [selectProvince, setSelectProvince] = useState('')
+
+    const [dataDistrict, setDataDistrict] = useState([])
+    const [selectDistrict, setSelectDistrict] = useState('')
+
+    const [dataWard, setDataWard] = useState([])
+    const [selectWard, setSelectWard] = useState('')
+    const [soNha, setSoNha] = useState('')
+
+    const [fee,setFee] = useState(0)
+    const [sdtNguoiNhan, setSdtNguoiNhan] = useState('')
+
+    const [openVXacNhan, setOpenVXacNhan] = useState(false)
+    const [dataXNDonHang, setDataXNDonHang] = useState({})
     // const [refresh,setRefresh] = useState(false)
     useEffect(
         () => {
             const fetchData = async () => {
                 try {
                   const result = await getChiTietGioHang(username)
+                  const responseProvince = await getProvince()
+                  setSelectProvince(responseProvince[0].ProvinceID) 
+                  setDataProvince(responseProvince)
                     setSachs(result.data)
                     setLoading(false)
                     console.log(result.data)
@@ -35,6 +55,47 @@ function GioHang({refresh}) {
         }, 
         []
     )
+
+    useEffect(
+        () => {
+            const fetchData = async () => {
+                try {
+                //   const result = await getChiTietGioHang(username)
+                  const responseDistrict = await getDistrict(selectProvince)
+                  setDataDistrict(responseDistrict)
+                  setSelectDistrict(responseDistrict[0].DistrictID) // fix lần đầu load page ko tải được Ward
+                //   console.log(selectDistrict)
+                } catch (error) {
+                  console.log(error)
+                }
+              }
+              fetchData() 
+        }, 
+        [selectProvince]
+    )
+
+
+    useEffect(
+        () => {
+            const fetchData = async () => {
+                try {
+                //   const result = await getChiTietGioHang(username)
+                // const id = (selectDistrict ==='') ? dataDistrict[0].DistrictID : selectDistrict
+                // if(selectDistrict ==='') setSelectDistrict()
+                  const responseWard = await getWard(selectDistrict)
+                    setSelectWard(responseWard[0].WardCode)
+                  setDataWard(responseWard)
+                     console.log(selectDistrict,"check")
+                } catch (error) {
+                  console.log(error)
+                }
+              }
+              fetchData() 
+        }, 
+        [selectDistrict]
+    )
+
+
     const handleXoaSach = (idGioHang) => {
         const fetchData = async () => {
             try {
@@ -49,6 +110,9 @@ function GioHang({refresh}) {
           }
           fetchData() 
     }
+
+
+    
 
     const handleQuantityChange = (id, event) => {
         const newQuantity = event.target.value;
@@ -65,6 +129,8 @@ function GioHang({refresh}) {
                 (book.idGioHang === id &&  book.soLuong > 0)? { ...book, selected: !book.selected } : book
             )
         );
+
+        // console.log("Log Gio Hang: so trang , trong luong", totalPage, totalWeight)
     };
 
     // Tính tổng giá tiền của các sách được chọn
@@ -75,38 +141,86 @@ function GioHang({refresh}) {
     // Tính số mục đã được chọn
     const selectedCount = sachs.filter(book => book.selected).length;
 
+    const totalPage = sachs.filter(book => book.selected)
+    .reduce((total,book) => total + parseInt(book.soTrang*book.soLuong),0)
 
+    const totalWeight = sachs.filter(book => book.selected)
+    .reduce((total,book) => total + parseInt(book.trongLuong*book.soLuong),0)
 
-    const handleDatHang = () => {
-        if(diaChiGiaoHang.trim()==='') {
+    
+    useEffect(
+        () => {
+            const fetchData = async () => {
+                try {
+                    if(selectedCount === 0) {
+                        setFee(0)
+                        return 
+                    }
+                  const responseFee = await getFee(totalAmount,selectWard,selectDistrict,totalWeight,totalPage)
+                  setFee(responseFee)
+                    //  console.log(selectDistrict,"check")
+                } catch (error) {
+                  console.log(error)
+                }
+              }
+              fetchData() 
+        }, 
+        [selectedCount, totalAmount, selectDistrict,selectWard]
+    )
+    const handleXacNhanDH = () => { 
+        if(sdtNguoiNhan.trim()==='') {
             setErrorDCG("Không thể bỏ trống!")
             return
         } else {
             setErrorDCG("")
         }
+        const province = dataProvince.find((val) => val.ProvinceID == selectProvince).ProvinceName
+        const district = dataDistrict.find((val)=>val.DistrictID == selectDistrict).DistrictName
+        const ward = dataWard.find((val)=>val.WardCode == selectWard).WardName
+
+        const dataToSend = {
+            "gioHangList": sachs.filter(book => book.selected),
+            "diaChi":  soNha + soNha!=''?", ":'' + ward + ", " + district + ", "+ province ,
+            "hinhThucThanhToan": phuongThucThanhToan,
+            "tenDangNhap": localStorage.getItem('username'),
+            "phiVanChuyen": fee,
+            "soDienThoai":sdtNguoiNhan
+          };
+        console.log(dataToSend)
+        setDataXNDonHang(dataToSend)
+        setDiaChiGiaoHang(soNha + soNha!=''?", ":'' + ward + ", " + district + ", "+ province)
+        setOpenVXacNhan(true)
+    }
+
+    const handleDatHang = () => {
+        
             const dataToSend = {
                 "gioHangList": sachs.filter(book => book.selected),
                 "diaChi": diaChiGiaoHang,
                 "hinhThucThanhToan": phuongThucThanhToan,
-                "tenDangNhap": localStorage.getItem('username')
+                "tenDangNhap": localStorage.getItem('username'),
+                "phiVanChuyen": fee,
+                "soDienThoai":sdtNguoiNhan
               };
     
             const fetchData = async () => {
                 try {
                   const result = await datMuaSach(dataToSend)
-                  if(result.code ===201) {
+                    if(result.code ===201) {
                     setErrorDH(result.status)
                     const response = result.data
                     setSachs(prevBooks =>
                         prevBooks.map(book =>
                         book.idGioHang === response.idGioHang ? { ...book, soLuong: response.soLuong, selected: !book.selected } : book
                     ))
+                    setOpenVXacNhan(false)
                     }
                     if(result.code ===200 ) {
                         if(phuongThucThanhToan==='1') {
                             const dataThanhToan = {
                                 "tenDangNhap": localStorage.getItem('username'),
-                                "amount": totalAmount
+                                "amount": (totalAmount + fee),
+                                "hoTen":localStorage.getItem('hoTen')
                             }
                             const fetchData1 = async () => {
                                 try {
@@ -147,8 +261,8 @@ function GioHang({refresh}) {
   return (
     <div>
       <div className='bg-zinc-300 h-full py-2 '>
-        <div className='grid grid-cols-3 gap-x-4 max-w-7xl mx-auto px-2 '>
-            <div className='bg-white p-6 px-0 col-span-2 rounded-lg'>
+        <div className='grid grid-cols-5 gap-x-4 max-w-7xl mx-auto px-2 '>
+            <div className='bg-white p-6 px-0 col-span-3 rounded-lg'>
                 <h1 className='text-lg font-bold pl-3'>Giỏ hàng:</h1>
                 {errorDH && <p className="text-red-600 mt-2 pl-3">{errorDH}</p>}
                 <table className="w-full mt-4 text-left table-auto min-w-max">
@@ -217,19 +331,21 @@ function GioHang({refresh}) {
                                         </div>
                                     </td>
                                     <td class="p-2">
-                                        <div class="flex flex-col">
-                                            <input type='number' value={val.soLuong}
+                                    <div class="flex items-center gap-3">
+                                    <input type='number' value={val.soLuong}
                                             onChange={(event) => handleQuantityChange(val.idGioHang, event)}
                                             min={1}
+                                            className='max-w-10'
                                             ></input>
-                                        {/* <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            Manager
-                                        </p> */}
-                                        {/* <p
-                                            class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                                            Organization
-                                        </p> */}
+                           
+                                    <div class="flex flex-col">
+                                         
+                                        <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                                            Cuốn
+                                        </p>
                                         </div>
+                                        </div>
+                                      
                                     </td>
                                     <td class="p-4">
                                         <div class="flex flex-col">
@@ -273,16 +389,123 @@ function GioHang({refresh}) {
                 </table>
 
             </div>
-            <div className='bg-white p-6 px-0 rounded-lg'>
+            <div className='bg-white p-6 px-0 col-span-2 rounded-lg'>
                 <h1 className='text-lg font-bold pl-3'>Đơn hàng:</h1>
                 <div className='pl-5 mt-5'>
+                    <p className="min-h-14 block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+                    - Chọn địa chỉ giao hàng.
+                    </p>
+                </div>
+                <div className='grid grid-cols-2 gap-x-1'>
+                <div class="relative h-12 w-40 mx-auto mt-5">
+                    <select
+                    value={selectProvince}
+                    onChange={(e) => setSelectProvince(e.target.value)}
+                        class="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-black outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-gray-900 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-black">
+                        {dataProvince.map(
+                            (val,key) => {
+                                return (
+                        <option key={key} value={val.ProvinceID}>{val.ProvinceName}</option>
+                                )
+                            }
+                        )
+                    }
+                    </select>
+
+                    <label
+                    class="after:content[' '] pointer-events-none absolute left-0  -top-5 flex h-full w-full select-none !overflow-visible truncate text-sm font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-2.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-gray-500 after:transition-transform after:duration-300 peer-placeholder-shown:leading-tight peer-placeholder-shown:text-blue-gray-500 peer-focus:text-sm    ">
+                        Tỉnh, Thành phố:
+                    </label>
+                </div>
+
+
+                <div class="relative h-12 w-40 mx-auto mt-5">
+                    <select
+                    value={selectDistrict}
+                    onChange={(e) => setSelectDistrict(e.target.value)}
+                        class="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-black outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-gray-900 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-black">
+                        {dataDistrict.map(
+                            (val,key) => {
+                                return (
+                        <option key={key} value={val.DistrictID}>{val.DistrictName}</option>
+                                )
+                            }
+                        )
+                    }
+                    </select>
+
+                    <label
+                    class="after:content[' '] pointer-events-none absolute left-0  -top-5 flex h-full w-full select-none !overflow-visible truncate text-sm font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-2.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-gray-500 after:transition-transform after:duration-300 peer-placeholder-shown:leading-tight peer-placeholder-shown:text-blue-gray-500 peer-focus:text-sm    ">
+                        Quận, Huyện:
+                    </label>
+                </div>
+
+                
+                <div class="relative h-12 w-40 mx-auto mt-5">
+                    <select
+                    value={selectWard}
+                    onChange={(e) => setSelectWard(e.target.value)}
+                        class="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-black outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-gray-900 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-black">
+                        {dataWard.map(
+                            (val,key) => {
+                                return (
+                        <option key={key} value={val.WardCode}>{val.WardName}</option>
+                                )
+                            }
+                        )
+                    }
+                    </select>
+
+                    <label
+                    class="after:content[' '] pointer-events-none absolute left-0  -top-5 flex h-full w-full select-none !overflow-visible truncate text-sm font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-2.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-gray-500 after:transition-transform after:duration-300 peer-placeholder-shown:leading-tight peer-placeholder-shown:text-blue-gray-500 peer-focus:text-sm    ">
+                        Phường, Xã:
+                    </label>
+                </div>
+
+                <div class="relative h-11 w-40 mx-auto mt-5">
+               
+                    <input placeholder=""
+                    class="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm 
+                    font-normal text-black outline outline-0 transition-all placeholder-shown:border-blue-gray-200 
+                    focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" 
+                    value={soNha}
+                    onChange={(e)=>setSoNha(e.target.value)}/>
+                    <label
+                    class="after:content[' '] pointer-events-none absolute left-0  -top-2.5 flex h-full w-full select-none !overflow-visible truncate text-sm font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-2.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-gray-500 after:transition-transform after:duration-300 peer-placeholder-shown:leading-tight peer-placeholder-shown:text-blue-gray-500 peer-focus:text-sm peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-gray-900 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                    Số nhà, Đường:  
+                    </label>
+                </div>
+                <div class=" relative h-11 w-40 mx-auto mt-5">
+                <input placeholder=""
+                    class="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm 
+                    font-normal text-black outline outline-0 transition-all placeholder-shown:border-blue-gray-200 
+                    focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" 
+                    value={sdtNguoiNhan}
+                    onChange={(e)=>setSdtNguoiNhan(e.target.value)}/>
+                    <label
+                    class="after:content[' '] pointer-events-none absolute left-0  -top-2.5 flex h-full w-full select-none !overflow-visible truncate text-sm font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-2.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-gray-500 after:transition-transform after:duration-300 peer-placeholder-shown:leading-tight peer-placeholder-shown:text-blue-gray-500 peer-focus:text-sm peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-gray-900 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                    Số diện thoại người nhận:  {errorDCG && <p className="text-red-600 ml-2">{errorDCG}</p>}
+                </label>
+                </div>
+
+                </div>
+                <div className='pl-5 mt-5'>
+                <p className="min-h-14 block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+                    - Phí vận chuyển: {formatCurrency(fee)}.
+                    </p>
                     <p className="min-h-14 block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
                     - Số sản phẩm đã chọn: {selectedCount} sản phẩm.
                     </p>
                     <p className="min-h-14 block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
-                    - Tổng giá tiền: {formatCurrency(totalAmount)}.
+                    - Tổng giá tiền sách: {formatCurrency(totalAmount)}.
                     </p>
+
+                    <p className="min-h-14 block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+                    - Thành tiền: {formatCurrency(totalAmount + fee)}.
+                    </p>
+
                 </div>
+
                 <div class="relative h-12 w-80 mx-auto mt-5">
                     <select
                     value={phuongThucThanhToan}
@@ -300,25 +523,14 @@ function GioHang({refresh}) {
                         Phương thức thanh toán:
                     </label>
                 </div>
-                <div class="relative h-11 w-80 mx-auto mt-5">
-               
-                    <input placeholder=""
-                    class="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm 
-                    font-normal text-black outline outline-0 transition-all placeholder-shown:border-blue-gray-200 
-                    focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" 
-                    value={diaChiGiaoHang}
-                    onChange={(e)=>setDiaChiGiaoHang(e.target.value)}/>
-                    <label
-                    class="after:content[' '] pointer-events-none absolute left-0  -top-2.5 flex h-full w-full select-none !overflow-visible truncate text-sm font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-2.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-gray-500 after:transition-transform after:duration-300 peer-placeholder-shown:leading-tight peer-placeholder-shown:text-blue-gray-500 peer-focus:text-sm peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-gray-900 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                    Địa chỉ giao sách:  {errorDCG && <p className="text-red-600 ml-2">{errorDCG}</p>}
-                    </label>
-                </div>
+
                 <div className="p-3 pt-0 w-80 mt-5 mx-auto">
                 <button
                 className="bg-orrange-500 align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg shadow-gray-900/10 
                 hover:shadow-gray-900/20 block w-full bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none "
                 type="button"
-                onClick={()=> handleDatHang()}
+                // onClick={()=> handleDatHang()}
+                onClick={()=>handleXacNhanDH()}
                 disabled={selectedCount === 0}
                 >
                 Đặt hàng
@@ -328,6 +540,7 @@ function GioHang({refresh}) {
         </div>
       </div>
       {showAlert && <Alert message={alertMessage} onClose={closeAlert} />}
+      <ViewXacNhanDatHang isOpen={openVXacNhan} onClose={()=>setOpenVXacNhan(false)} dataXNDH={dataXNDonHang} handleDatHang={()=>handleDatHang()}/>
     </div>
   )
 }

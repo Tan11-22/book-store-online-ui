@@ -10,24 +10,26 @@ const Navbar = ({refresh}) => {
   const navigate = useNavigate()
   const [slSach, setSlSach] = useState(0)
   const username = localStorage.getItem('username')
+  const avatar = localStorage.getItem('hinhAnh')
+  const picture = localStorage.getItem('picture')
   const [search, setSearch] = useState('')
 
   const navigateToComponent = (event) => {
     event.preventDefault();
-    navigate(`/tim-kiem?page=1&search=${search}`);
+    // navigate(`/tim-kiem?page=1&search=${search}`);
+    navigate(`/tim-kiem?page=1&search=${search}&tg=&tl=&sx=0`);
   };
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      navigate(`/tim-kiem?page=1&search=${search}`);
+      // navigate(`/tim-kiem?page=1&search=${search}`);
+      navigate(`/tim-kiem?page=1&search=${search}&tg=&tl=&sx=0`);
     }
   }
   const handleLogout = (event) => {
     event.preventDefault();
-      localStorage.removeItem('username')
-      localStorage.removeItem('token')
-      localStorage.removeItem('role')
-      navigate("/login")
+    localStorage.clear();
+    navigate("/login")
   } 
 
   useEffect(
@@ -114,13 +116,18 @@ const Navbar = ({refresh}) => {
             </a>
             <a href="#" className="text-sm font-semibold leading-6 text-gray-900 py-1 pr-2"
             onClick={(event)=> handleGoInfoPage(event)}>
-              <img src={user} alt='Logo' className='h-7 w-auto' />
+              {!username && <img src={user} alt='Logo' className='h-7 w-auto' />
+                }
+              {username && <img src={picture?picture:`http://localhost:8080/api/sach-service/hinh-anh/getUser?name=${avatar}`} alt='Logo'
+               className="relative inline-block h-7 w-7 !rounded-full object-cover object-center" />
+                }
             </a>
             {username && 
               <a href="#" className="text-sm font-semibold leading-6 text-gray-900 py-1"
               onClick={(event)=>handleLogout(event)}
               >
-              <img src={logout} alt='Logo' className='h-7 w-auto' />
+              <img src={logout} alt='Logo' 
+              className='h-7 w-auto' />
               </a>
             }
             

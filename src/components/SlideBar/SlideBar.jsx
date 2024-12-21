@@ -6,15 +6,15 @@ import { useNavigate } from 'react-router-dom';
 function SlideBar() {
     const navigate = useNavigate()
     const handleLogout = () => {
-        localStorage.removeItem('username')
-        localStorage.removeItem('token')
-        localStorage.removeItem('role')
+        localStorage.clear()
         navigate("/login")
     } 
+    const role = localStorage.getItem('role')
+    const checkRole = (role =='QUANLY')
   return (
     <div>
       <div class="relative flex flex-col bg-clip-border rounded-lg bg-orrange-500 text-black h-[calc(100vh)] w-full max-w-[16rem] p-4 shadow-xl shadow-blue-gray-900/5">
-        <div class="mb-2 p-4">
+        <div class="mb-2 px-4">
             <div className='flex lg:flex-1 py-1'>
                 <a href='#' className='flex lg:flex'>
                 <img src={logo} alt='Logo' className='h-9 w-auto' />
@@ -23,15 +23,13 @@ function SlideBar() {
             </div>
         </div>
         <nav class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-black">
-            {/* <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none">
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+             onClick={()=>navigate("/admin/don-mua")}>
             <div class="grid place-items-center mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-                <path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-1.172 3.513a.75.75 0 001.424.474l.329-.987h8.418l.33.987a.75.75 0 001.422-.474l-1.17-3.513H18a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zm6.04 16.5l.5-1.5h6.42l.5 1.5H8.29zm7.46-12a.75.75 0 00-1.5 0v6a.75.75 0 001.5 0v-6zm-3 2.25a.75.75 0 00-1.5 0v3.75a.75.75 0 001.5 0V9zm-3 2.25a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z" clip-rule="evenodd"></path>
-                </svg>
+                <img width="24" height="24" src="https://img.icons8.com/ios-glyphs/30/purchase-order.png" alt="purchase-order"/>
+            </div>Quản trị đơn mua
             </div>
-            Blocks
-            </div> */}
-            <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
                 onClick={()=>navigate("/admin")}
             >
             <div class="grid place-items-center mr-4">
@@ -41,7 +39,7 @@ function SlideBar() {
 
             </div>Quản trị sách
             </div>
-            <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
                 onClick={()=>navigate("/admin/don-nhap")}
             >
             <div class="grid place-items-center mr-4">
@@ -53,7 +51,7 @@ function SlideBar() {
             </div>Quản trị đơn nhập 
             </div>
 
-            <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
                 onClick={()=>navigate("/admin/phieu-nhap")}
             >
             <div class="grid place-items-center mr-4">
@@ -65,7 +63,67 @@ function SlideBar() {
             </div>Quản trị phiếu nhập
             </div>
           
-            <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+           
+
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+                 onClick={()=>navigate("/admin/the-loai")}
+            >
+            <div class="grid place-items-center mr-4">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="category-icon"
+            >
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+            </svg>
+
+
+            </div>Quản trị thể loại
+            </div>
+
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+                 onClick={()=>navigate("/admin/tac-gia")}
+            >
+            <div class="grid place-items-center mr-4">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="author-with-pen-icon"
+            >
+
+                <circle cx="12" cy="7" r="4" />
+
+                <path d="M16 21v-2a4 4 0 0 0-8 0v2" />
+
+                <path d="M19 15l-5 5" />
+                <path d="M14 20l5-5 2 2-5 5z" />
+
+            </svg>
+
+
+            </div> Quản trị tác giả
+            </div>
+            {
+                checkRole ? 
+                <>
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
                  onClick={()=>navigate("/admin/gia-sach")}
             >
             <div class="grid place-items-center mr-4">
@@ -78,7 +136,8 @@ function SlideBar() {
             </div>Quản trị giá
             </div>
 
-            <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
                  onClick={()=>navigate("/admin/doanh-thu")}
             >
             <div class="grid place-items-center mr-4">
@@ -86,12 +145,25 @@ function SlideBar() {
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.6 16.733c.234.269.548.456.895.534a1.4 1.4 0 0 0 1.75-.762c.172-.615-.446-1.287-1.242-1.481-.796-.194-1.41-.861-1.241-1.481a1.4 1.4 0 0 1 1.75-.762c.343.077.654.26.888.524m-1.358 4.017v.617m0-5.939v.725M4 15v4m3-6v6M6 8.5 10.5 5 14 7.5 18 4m0 0h-3.5M18 4v3m2 8a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"/>
             </svg>
 
+             
 
-            </div>Thống kê doanh thu
+            </div>Báo cáo thống kê
             </div>
 
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+             onClick={()=>navigate("/admin/tai-khoan")}>
+            <div class="grid place-items-center mr-4">
+                <img width="24" height="24" src="https://img.icons8.com/ios/50/bank-card-back-side--v1.png" alt="bank-card-back-side--v1"/>
+            </div>Quản trị tài khoản
+            </div>
 
-            <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
+           
+
+            </>
+            :
+            <></>
+            }
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
              onClick={()=>navigate("/admin/thong-tin")}>
             <div class="grid place-items-center mr-4">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
@@ -99,7 +171,8 @@ function SlideBar() {
                 </svg>
             </div>Thông tin cá nhân
             </div>
-            <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight 
+
+            <div role="button" tabindex="0" class="flex items-center w-full p-2 rounded-lg text-start leading-tight 
             transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 
             active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none"
             onClick={() => handleLogout()}>
@@ -109,6 +182,7 @@ function SlideBar() {
                 </svg>
             </div>Đăng xuất
             </div>
+           
         </nav>
         </div>
     </div>

@@ -9,7 +9,7 @@ function PhieuNhap() {
   useEffect(() => {
     if (role) {
       console.log(role)
-      if (role !== 'NHANVIEN') {
+      if (role == 'KHACHHANG') {
         return navigate("/");
       } 
     } else {

@@ -296,10 +296,10 @@ function CtDoanhThu() {
                                 aria-selected={activeTab === '0'}
                                 aria-controls="app"
                                 >
-                                <span className="ml-1">Bảng</span>
+                                <span className="ml-1 font-bold">Bảng</span>
                                 </a>
                             </li>
-                            <li className="z-30 flex-auto text-center w-40">
+                            <li className="ml-3 z-30 flex-auto text-center w-40">
                                 <a
                                 className={`z-30 flex items-center justify-center w-full px-0 py-1 mb-0 transition-all ease-in-out border-0 rounded-lg cursor-pointer text-slate-700 ${activeTab === '1' ? 'bg-orrange-500 text-black' : 'bg-zinc-300'}`}
                                 onClick={() => handleTabClick('1')}
@@ -307,7 +307,7 @@ function CtDoanhThu() {
                                 aria-selected={activeTab === '1'}
                                 aria-controls="message"
                                 >
-                                <span className="ml-1">Biểu đồ</span>
+                                <span className="ml-1 font-bold">Biểu đồ</span>
                                 </a>
                             </li>
                         
@@ -747,7 +747,7 @@ function CtDoanhThu() {
                                         </svg>
 
 
-                                        Tạo report</button>}
+                                        Xuất báo cáo</button>}
                                     content={() => componentRef.current}
                                     pageStyle={`@page { 
                                       size: landscape; 

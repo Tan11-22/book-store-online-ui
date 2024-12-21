@@ -8,7 +8,7 @@ export const getSach = async (start, size) => {
             size: size
           }
         });
-        console.log(response.data);
+        console.log("check call api sach",response.data);
         return response.data; // Trả về dữ liệu từ API
       } catch (error) {
         console.error('Error fetching data:', error);

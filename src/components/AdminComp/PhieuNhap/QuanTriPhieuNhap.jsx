@@ -13,7 +13,7 @@ function QuanTriPhieuNhap() {
     }
     const formatDate = (dateString) => {
         // Tách chuỗi ngày thành các phần tử
-        const [year, month, day] = dateString.split('-');
+        const [year, month, day] = dateString.split(' ')[0].split('-');
         // Sắp xếp lại các phần tử theo định dạng dd-MM-yyyy
         return `${day}-${month}-${year}`;
       }
@@ -23,6 +23,7 @@ function QuanTriPhieuNhap() {
             const fetchData = async () => {
                 try {
                   const result = await layDSPhieuNhapQT();
+                  console.log(result.data)
                   setDataPN(result.data)
                 } catch (error) {
                   console.log(error)

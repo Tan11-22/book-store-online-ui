@@ -1,8 +1,12 @@
 import React, {useState, useEffect} from 'react'
-import { getChiTietSach } from '../../context/SachService'
+import { getChiTietSach, getSachCungTheLoai } from '../../context/SachService'
 import { formatCurrency } from '../../context/utility'
 import { themSachVaoGH } from '../../context/SachService'
 import { useNavigate } from 'react-router-dom';
+import DefaultBinhLuan from '../BinhLuan/DefaultBinhLuan';
+import FormBinhLuan from '../BinhLuan/FormBinhLuan';
+import CardSachTuongTu from '../CardSach/CardSachTuongTu';
+import { LayDSBinhLuanCuaSach, laySoLuongBinhLuan } from '../../context/BinhLuanService';
 
 
 
@@ -16,6 +20,12 @@ function ChiTietSach({maSach, openAlert, refresh}) {
   const [tacGias,setTacGias] = useState([])
   const [theLoais,setTheLoais] = useState([])
   const [hinhAnhs,setHinhAnhs] = useState([])
+
+  const [dsBinhLuan, setDsBinhLuan] = useState([])
+  const [soLuongBinhLuanHienThi, setSoLuongBinhLuanHienThi] = useState(4)
+  const [soLuongBinhLuan, setSoLuongBinhLuan] = useState(0)
+  const [lamMoiDSBinhLuan, setLamMoiDSBinhLuan] = useState(false)
+  const [dsSachCungTheLoai, setDsSachCungTheLoai] = useState([])
   const handleClickImage = (image) => {
     setImage(image?image.filename:"default.png")
   }
@@ -37,6 +47,12 @@ function ChiTietSach({maSach, openAlert, refresh}) {
               setTacGias(result.data.tacGias)
               setTheLoais(result.data.theLoais)
               setHinhAnhs(result.data.hinhAnhs)
+              // const responseSoLuongBinhLuan = await laySoLuongBinhLuan(maSach)
+              // setSoLuongBinhLuan(responseSoLuongBinhLuan.data)
+              // const responseDSBinhLuan = await LayDSBinhLuanCuaSach(maSach,0,soLuongBinhLuanHienThi)
+              // setDsBinhLuan(responseDSBinhLuan.data)
+              const responseDSCungTL = await getSachCungTheLoai(maSach)
+              setDsSachCungTheLoai(responseDSCungTL.data)
               if(result.code ===200) {
                 setImage(result.data.hinhAnhs[0]?result.data.hinhAnhs[0].filename:"default.png")
                 setLoading(false)
@@ -49,6 +65,24 @@ function ChiTietSach({maSach, openAlert, refresh}) {
           fetchData(); 
     }, 
     []
+  )
+
+  useEffect(
+    () => {
+        const fetchData = async () => {
+          // if(soLuongBinhLuanHienThi == 4) return 
+            try {
+              const responseSoLuongBinhLuan = await laySoLuongBinhLuan(maSach)
+              setSoLuongBinhLuan(responseSoLuongBinhLuan.data)
+              const responseDSBinhLuan = await LayDSBinhLuanCuaSach(maSach,0,soLuongBinhLuanHienThi)
+              setDsBinhLuan(responseDSBinhLuan.data)
+            } catch (error) {
+              console.log(error)
+            }
+          };
+          fetchData(); 
+    }, 
+    [soLuongBinhLuanHienThi, lamMoiDSBinhLuan]
   )
 
   const themVaoGioHang = (isbn,soLuong) => {
@@ -70,6 +104,12 @@ function ChiTietSach({maSach, openAlert, refresh}) {
     fetchData1(); 
   }
 
+  const xemThemBinhLuan = () => {
+    setSoLuongBinhLuanHienThi(soLuongBinhLuan)
+  }
+  const loadLaiDSBinhLuan = () => {
+    setLamMoiDSBinhLuan(!lamMoiDSBinhLuan)
+  }
   if (loading) return null
   return (
     <div className='bg-zinc-300 h-full py-2 '>
@@ -77,7 +117,7 @@ function ChiTietSach({maSach, openAlert, refresh}) {
         <div className='my-4'>
           <div className="grid gap-4">
             <div className='flex justify-center'>
-              <img className="h-auto w-3/4 max-w-full rounded-lg object-cover object-center md:h-[400px]"
+              <img className="h-auto  max-w-full rounded-lg object-cover object-center md:h-[400px]"
                 src={`http://localhost:8080/api/sach-service/hinh-anh/get?name=${image}`}
                 alt="" />
             </div>
@@ -132,7 +172,7 @@ function ChiTietSach({maSach, openAlert, refresh}) {
                                   
                                 </h6>
                                 <h6
-                                  class="font-manrope font-semibold text-2xl leading-9 text-gray-900 pr-5 sm:border-r border-gray-200 mr-5">
+                                  class="font-manrope font-semibold text-2xl leading-9 text-red-600 pr-5 sm:border-r border-gray-200 mr-5">
                                   {sach.giaBan?formatCurrency(sach.giaGiam):"Chưa cập nhật giá"}
                                   
                                 </h6>
@@ -213,7 +253,7 @@ function ChiTietSach({maSach, openAlert, refresh}) {
                                     </svg>
 
                                 </div> */}
-                                <span class="pl-2 font-normal leading-7 text-gray-500 text-sm ">{sach.soBinhLuan} lượt bình luận</span>
+                                <span class="pl-2 font-normal leading-7 text-gray-500 text-sm ">{soLuongBinhLuan} lượt bình luận</span>
                             </div>
 
                         </div>
@@ -321,6 +361,7 @@ function ChiTietSach({maSach, openAlert, refresh}) {
                                     class="font-semibold text-gray-900 cursor-pointer text-lg py-[13px] px-6 w-full sm:max-w-[118px] outline-0 border-y border-gray-400 bg-transparent placeholder:text-gray-900 text-center hover:bg-gray-50"
                                     >{soLuong}</p>
                                 <button
+                                  disabled = {soLuong === sach.soLuong}
                                    onClick={()=>add()}
                                     class="group py-4 px-6 border border-gray-400 rounded-r-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
                                     <svg class="stroke-black group-disabled:stroke-gray-900" width="22" height="22"
@@ -336,7 +377,10 @@ function ChiTietSach({maSach, openAlert, refresh}) {
                             </div>
                             <button
                                 onClick={()=> themVaoGioHang(sach.isbn,soLuong)}
-                                class="group py-4 px-5 rounded-full bg-orrange-500 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 transition-all duration-500 hover:bg-indigo-100">
+                                disabled={!sach.soLuong>0}
+                                class="group py-4 px-5 rounded-full bg-orrange-500 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 transition-all duration-500 hover:bg-indigo-100
+                                disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none
+                                ">
                                 <svg class="stroke-black " width="22" height="22" viewBox="0 0 22 22" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -350,13 +394,85 @@ function ChiTietSach({maSach, openAlert, refresh}) {
                         </div>
         </div>
       </div>
-      <div className='max-w-7xl mx-auto px-2 bg-white rounded-lg mt-2 h-64'>
+      {/* <div className='max-w-7xl mx-auto px-2 bg-white rounded-lg mt-2 h-64'>
         <h3 className="text-gray-800 font-lg font-bold tracking-normal leading-tight  text-2xl py-2 px-4 mb-1 bg-white rounded-lg max-w-7xl mx-auto">
             Thông tin mô tả</h3>
           <p className='px-10'>
           {sach.moTa}
           </p>
+      </div> */}
+      <div className="max-w-7xl mx-auto mt-2 grid grid-cols-4 gap-3 ">
+      <div className="col-span-3  bg-white rounded-lg  h-64">
+
+      <h3 className="text-gray-800 font-lg font-bold tracking-normal leading-tight  text-2xl py-2 px-4 mb-1 bg-white rounded-lg max-w-7xl mx-auto">
+            Thông tin mô tả</h3>
+          <p className='px-10'>
+          {sach.moTa}
+          </p>
+        </div>
+      <div className="col-span-3  bg-white rounded-lg">
+      <h3 className="text-gray-800 font-lg font-bold tracking-normal leading-tight  text-2xl py-2 px-4 mb-1 bg-white rounded-lg max-w-7xl mx-auto">
+      Bình luận</h3>
+        <FormBinhLuan isbn={maSach} refresh={loadLaiDSBinhLuan}/>
+        {/* <div className="col-span-10 mx-2 h-[2px] w-full bg-black"></div> */}
+        <h3 className="text-gray-800 font-lg font-bold tracking-normal leading-tight  text-2xl py-2 px-4 mb-1 bg-white rounded-lg max-w-7xl mx-auto">
+      Danh sách bình luận</h3>
+        {dsBinhLuan.map(
+                                  (val, key) =>{
+                                    return (
+                                      // <a key={key} href='#' className='px-1'> {val.ho} {val.ten},</a>
+                                      <DefaultBinhLuan key={key} data={val}/>
+                                    )
+                                  }
+                                )}
+     
+     {
+      soLuongBinhLuan == 0 ? 
+      <p className="p-4 ml-2 block font-sans text-base antialiased font-normal leading-normal text-black italic">
+      Hiện tại chưa có bình luận nào.
+      </p>
+      :<></>
+     }
+        {
+          soLuongBinhLuan > soLuongBinhLuanHienThi ?
+          <div className='max-w-44 mx-auto my-5'>
+
+          <button
+          className="bg-orrange-500 align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg shadow-gray-900/10 
+                              hover:shadow-gray-900/20 block w-full bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none "
+                              type="button"
+                              onClick={()=> xemThemBinhLuan()}
+                              >
+                              Xem tất cả ({soLuongBinhLuan})
+                              </button>
+          </div>
+          :
+          <>
+
+          </>
+        }
+
       </div>
+            <div className="row-start-1 row-span-4 col-start-4 bg-white rounded-lg max-h-[940px] pb-2">
+            <h3 className="text-gray-800 font-lg font-bold tracking-normal leading-tight  text-2xl py-2 px-4 mb-1 bg-white rounded-lg max-w-7xl mx-auto">
+            Sách cùng thể loại</h3>
+            {dsSachCungTheLoai.length > 0 ? dsSachCungTheLoai.map(
+                                  (val, key) =>{
+                                    return (
+                                      // <a key={key} href='#' className='px-1'> {val.ho} {val.ten},</a>
+                                      <CardSachTuongTu key={key} data={val}/>
+                                    )
+                                  }
+                                )
+                              :
+                              <>
+                               <p className="p-4 ml-2 block font-sans text-base antialiased font-normal leading-normal text-black italic">
+                                    Sách cùng thể loại hiện chưa được cập nhật.
+                                </p>
+                              </>
+                              }
+            </div>
+        </div>
     </div>
   )
 }

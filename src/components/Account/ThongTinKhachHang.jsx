@@ -12,6 +12,7 @@ function ThongTinKhachHang() {
         return `${day}-${month}-${year}`;
       }
     const [data, setData] = useState(null)
+    const picture = localStorage.getItem('picture')
     useEffect(
         () => {      
             const fetchData = async () => {
@@ -35,14 +36,14 @@ function ThongTinKhachHang() {
             <div className='my-4'>
                 <div className='flex justify-center'>
                     <img className="h-auto w-3/4 max-w-full rounded-full object-cover object-center md:h-[200px]"
-                    src={`http://localhost:8080/api/sach-service/hinh-anh/getUser?name=${data.hinhAnh}`}
+                    src={picture?picture:`http://localhost:8080/api/sach-service/hinh-anh/getUser?name=${data.hinhAnh}`}
                     alt="" />
                 </div>
             </div>
             <div className="flex items-center justify-start w-full mt-5">                   
-                            <button className="mx-auto px-7 py-4 bg-orrange-500 text-black rounded-lg font-sans text-xs font-bold uppercase" 
+                            {/* <button className="mx-auto px-7 py-4 bg-orrange-500 text-black rounded-lg font-sans text-xs font-bold uppercase" 
                             // onClick={()=>handleTaoDon()}
-                            >Cập nhật</button>
+                            >Cập nhật</button> */}
                         </div>
         </div>
         <div className='px-0 col-span-2 rounded-lg ml-10'>
@@ -54,7 +55,7 @@ function ThongTinKhachHang() {
                             </li>
                             <li class="flex items-center gap-3">
                                 <span class="font-normal text-base text-gray-900 ">
-                                  <strong>- Giới tính:</strong> {data.gioiTinh? ' Nữ':' Nam'}
+                                  <strong>- Giới tính:</strong> {data.gioiTinh? ' Nam':' Nữ'}
                                   </span>
                             </li>
                             <li class="flex items-center gap-3">

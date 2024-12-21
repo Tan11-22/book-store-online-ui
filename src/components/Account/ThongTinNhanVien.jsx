@@ -41,9 +41,9 @@ function ThongTinNhanVien() {
                 </div>
             </div>
             <div className="flex items-center justify-start w-full mt-5">                   
-                            <button className="mx-auto px-7 py-4 bg-orrange-500 text-black rounded-lg font-sans text-xs font-bold uppercase" 
+                            {/* <button className="mx-auto px-7 py-4 bg-orrange-500 text-black rounded-lg font-sans text-xs font-bold uppercase" 
                             // onClick={()=>handleTaoDon()}
-                            >Cập nhật</button>
+                            >Cập nhật</button> */}
 
                             <button className="mx-auto px-7 py-4 bg-orrange-500 text-black rounded-lg font-sans text-xs font-bold uppercase" 
                             onClick={() => setOpenModalsDMK(true)}
@@ -59,7 +59,7 @@ function ThongTinNhanVien() {
                             </li>
                             <li class="flex items-center gap-3">
                                 <span class="font-normal text-base text-gray-900 ">
-                                  <strong>- Giới tính:</strong> {data.gioiTinh? ' Nữ':' Nam'}
+                                  <strong>- Giới tính:</strong> {data.gioiTinh ? ' Nam':' Nữ'}
                                   </span>
                             </li>
                             <li class="flex items-center gap-3">

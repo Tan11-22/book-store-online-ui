@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { getChiTietDonNhapSach } from '../../../context/QuanTriSach'
+import { getChiTietDonNhapSach, layChiTietDonNhapSach } from '../../../context/QuanTriSach'
 import { formatCurrency } from '../../../context/utility' 
 function ModalsChiTietDonNhap({open, onClose, idDon}) {
     const handleClose = () => {
@@ -11,7 +11,7 @@ function ModalsChiTietDonNhap({open, onClose, idDon}) {
         () => {
             const fetchData = async () => {
                 try {
-                  const result = await getChiTietDonNhapSach(idDon);
+                  const result = await layChiTietDonNhapSach(idDon);
                   if (result.code === 200) {
                     setDataDon(result.data.donNhapSachDTO)
                     setDataSach(result.data.sachs)
@@ -83,7 +83,7 @@ function ModalsChiTietDonNhap({open, onClose, idDon}) {
 
 
                        
-                                    <div className="p-2 px-0 overflow-scroll h-[87vh]">
+                                    <div className="p-2 px-0">
                 <table className="w-full text-left table-auto min-w-max">
                 <thead>
                     <tr>

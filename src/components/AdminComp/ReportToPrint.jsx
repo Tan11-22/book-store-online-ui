@@ -8,7 +8,7 @@ const ReportToPrint = React.forwardRef(({ data }, ref) => (
                     Thống kê sách
             </h5>
         </div>
-        <div class="mb-2 p-4">
+        <div className="mb-2 p-4">
             <div className='flex lg:flex-1 py-1'>
                 <a href='#' className='flex lg:flex'>
                 <img src={logo} alt='Logo' className='h-9 w-auto' />
@@ -38,12 +38,27 @@ const ReportToPrint = React.forwardRef(({ data }, ref) => (
                     </th>
                     <th className="p-4 border borderlue-gray-100 bg-blue-gray-50/50">
                         <p className="block font-sans text-sm antialiased font-bold leading-normal text-black">
+                        Số lượng đã nhập
+                        </p>
+                    </th>
+                    <th className="p-4 border borderlue-gray-100 bg-blue-gray-50/50">
+                        <p className="block font-sans text-sm antialiased font-bold leading-normal text-black">
+                        Số lượng đã bán
+                        </p>
+                    </th>
+                    <th className="p-4 border borderlue-gray-100 bg-blue-gray-50/50">
+                        <p className="block font-sans text-sm antialiased font-bold leading-normal text-black">
                         Số lượng còn lại
                         </p>
                     </th>
                     <th className="p-4 border borderlue-gray-100 bg-blue-gray-50/50">
                         <p className="block font-sans text-sm antialiased font-bold leading-normal text-black">
                         Tác giả
+                        </p>
+                    </th>
+                    <th className="p-4 border borderlue-gray-100 bg-blue-gray-50/50">
+                        <p className="block font-sans text-sm antialiased font-bold leading-normal text-black">
+                        Thể loại
                         </p>
                     </th>
                     <th className="p-4 border borderlue-gray-100 bg-blue-gray-50/50">
@@ -74,13 +89,44 @@ const ReportToPrint = React.forwardRef(({ data }, ref) => (
                     </td>
                     <td className="p-4 border borderlue-gray-50">
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-black">
-                        {val.soLuong === 0 ? 'Hết':`${val.soLuong} cuốn`}
+                        {val.soLuongNhap} cuốn
                         </p>
                     </td>
                     <td className="p-4 border borderlue-gray-50">
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-black">
-                            {val.tacGias[0] && `${val.tacGias[0].ho} ${val.tacGias[0].ten}`}
+                        {val.soLuongBan} cuốn
                         </p>
+                    </td>
+                    <td className="p-4 border borderlue-gray-50">
+                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-black">
+                        {val.soLuong} cuốn
+                        </p>
+                    </td>
+                    <td className="p-4 border borderlue-gray-50">
+                        {val.tacGias && 
+                            val.tacGias.map(
+                                (val1, key1) =>{ return(
+                                    <p key={key1} className="block font-sans text-sm antialiased font-normal leading-normal text-black">
+                                        {`- ${val1.ho} ${val1.ten}`}
+                                    </p>
+                                )
+                            }
+                            )
+                        }
+                        
+                    </td>
+                    <td className="p-4 border borderlue-gray-50">
+                        {val.theLoais && 
+                            val.theLoais.map(
+                                (val1, key1) =>{ return(
+                                    <p key={key1} className="block font-sans text-sm antialiased font-normal leading-normal text-black">
+                                        {`- ${val1.tenTheLoai}`}
+                                    </p>
+                                )
+                            }
+                            )
+                        }
+                        
                     </td>
                     <td className="p-4 border borderlue-gray-50">
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-black">

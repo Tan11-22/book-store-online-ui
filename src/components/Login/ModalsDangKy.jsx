@@ -32,13 +32,47 @@ function ModalsDangKy({open, onClose}) {
       const [errorTDN, setErrorTDN] = useState('')
       const [errorMK, setErrorMK] = useState('')
       const [errorEMAIL, setErrorEMAIL] = useState('')
-      const [errorHO, setErrorHO] = useState('')
+      // const [errorHO, setErrorHO] = useState('')
       const [errorTEN, setErrorTEN] = useState('')
     //   const [errorGIOITINH, setErrorGIOITINH] = useState('')
     //   const [errorDIACHI, setErrorDIACHI] = useState('')
     //   const [errorNGAYSINH, setErrorNGAYSINH] = useState('')
     //   const [errorSODIENTHOAI, setErrorSODIENTHOAI] = useState('')
     const handleDangKy= () => {
+      let count = 0;
+
+      if (TDN === '') {
+        setErrorTDN("Tên đăng nhập không thể để trống!");
+          count += 1;
+      } else {
+        setErrorTDN('');
+      }
+
+      if (MK === '') {
+        setErrorMK("Mật khẩu không thể để trống!");
+          count += 1;
+      } else {
+        setErrorMK('');
+      }
+
+      if (EMAIL === '') {
+        setErrorEMAIL("Email không thể để trống!");
+          count += 1;
+      } else {
+        setErrorEMAIL('');
+      }
+
+      if (TEN === '') {
+        setErrorTEN("Tên không thể để trống!");
+          count += 1;
+      } else {
+        setErrorTEN('');
+      }
+
+      if (count > 0) {
+          return
+      }
+
 
         const formData = new FormData();
         formData.append('tenDangNhap', TDN);
@@ -50,9 +84,7 @@ function ModalsDangKy({open, onClose}) {
         formData.append('diaChi', DIACHI);
         formData.append('ngaySinh',NGAYSINH)
         formData.append('soDienThoai',SODIENTHOAI)
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(key, value);
-        // }
+
         const fetchData = async () => {
             try {
               const result = await dangKy(formData);
@@ -65,6 +97,12 @@ function ModalsDangKy({open, onClose}) {
             
                 return () => clearTimeout(timer); // Clear the timeout if the component is unmounted
               }
+               else if(result.code === 201) {
+                setErrorTDN(result.status)
+               }
+               else if(result.code === 202) {
+                setErrorEMAIL(result.status)
+               }
             } catch (error) {
               console.log(error)
             }
@@ -114,7 +152,7 @@ function ModalsDangKy({open, onClose}) {
                         type='text'/>
 
                         <label for="name" className="text-black text-sm font-bold leading-tight tracking-normal">Họ(*)</label>
-                        {errorHO && <p className="text-red-600 mt-2">{errorHO}</p>}
+                        {/* {errorHO && <p className="text-red-600 mt-2">{errorHO}</p>} */}
                         <input id="name" className="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center 
                         pl-3 text-sm border-gray-300 rounded border" placeholder="Họ" 
                         value={HO}

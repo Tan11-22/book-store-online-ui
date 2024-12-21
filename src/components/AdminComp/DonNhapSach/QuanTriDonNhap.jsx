@@ -44,6 +44,11 @@ function QuanTriDonNhap() {
         setIdDonClick(id)
         setOpenModalsTaoPN(true)
     }
+
+    const handeRefresh = () =>{
+        setIdDonClick(-1)
+        setRefresh(!refresh)
+    }
     useEffect (
         () => {
             const fetchData = async () => {
@@ -186,7 +191,7 @@ function QuanTriDonNhap() {
                     </td>
                     <td className="p-4 border-b border-blue-gray-50">
                     
-                    {val.daNhap==0? 
+                    {val.phaiNhap - val.daNhap > 0? 
                     <>
                         <button
                         className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -247,9 +252,9 @@ function QuanTriDonNhap() {
                 </table>
             </div>
             </div>
-            <ModalsTaoDonNhap open={openModalsTaoDonNhap} onClose={()=>setOpenModalsTaoDonNhap(false)}  dataNXB={dataNXB} refresh={()=>setRefresh(!refresh)}/>
+            <ModalsTaoDonNhap open={openModalsTaoDonNhap} onClose={()=>setOpenModalsTaoDonNhap(false)}  dataNXB={dataNXB} refresh={()=>handeRefresh()}/>
             <ModalsChiTietDonNhap open={openModalsCT} onClose={()=>setOpenModalsCT(false)}  idDon={idDonClick}/>
-            <ModalsTaoPhieuNhap open={openModalsTaoPN} onClose={()=>setOpenModalsTaoPN(false)}  idDon={idDonClick}/>
+            <ModalsTaoPhieuNhap open={openModalsTaoPN} onClose={()=>setOpenModalsTaoPN(false)}  idDon={idDonClick} refresh={()=>handeRefresh()}/>
 
             <ConfirmForm
             title="Xác nhận xoá đơn nhập sách."

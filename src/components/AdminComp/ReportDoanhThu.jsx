@@ -5,7 +5,7 @@ const ReportDoanhThu = React.forwardRef(({ data, nam }, ref) => (
     <div ref={ref}>
         <div className='ml-10 mt-10'>
             <h5 className="block font-sans text-5xl antialiased font-semibold leading-snug tracking-normal text-black ">
-                    Thống kê doanh thu năm {nam}
+                    Thống kê lợi nhuận năm {nam}
             </h5>
 
             <div className='flex lg:flex-1 py-1'>

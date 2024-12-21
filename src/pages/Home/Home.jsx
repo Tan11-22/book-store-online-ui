@@ -15,6 +15,17 @@ function Home() {
     const [showAlert, setShowAlert] = useState(false);
 
     const [dataSachBC, setDataSachBC] = useState()
+    const role = localStorage.getItem('role')
+      useEffect(() => {
+        if (role) {
+          if (role == 'KHACHHANG') {
+            return navigate("/");
+          } 
+         else {
+            return navigate("/admin") 
+          }
+        }
+      },[])
     useEffect(
         () => {
             const fetchData1 = async () => {
@@ -31,10 +42,11 @@ function Home() {
                 }
               };
               fetchData1(); 
-            console.log(dataSach)
         }, 
         []
     )
+
+    
     const closeAlert = () => {
       setShowAlert(false);
     };
@@ -65,7 +77,7 @@ function Home() {
             <h3 className="text-gray-800 font-lg font-medium tracking-normal leading-tight  text-2xl py-2 px-4 ">
               Bán chạy nhất</h3>
             <button
-              class=" mx-4 my-2 select-none rounded-lg bg-orrange-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-black shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              className=" mx-4 my-2 select-none rounded-lg bg-orrange-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-black shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"
               onClick={handleClick}
               >

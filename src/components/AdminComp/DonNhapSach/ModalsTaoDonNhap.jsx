@@ -19,6 +19,8 @@ function ModalsTaoDonNhap({open, onClose, refresh, dataNXB}) {
         setNgayDat(formattedDate);
       }, []);
     const handleClose = () => {
+        setNXB('')
+        setDataDon([])
         onClose()
     }
 
@@ -90,7 +92,8 @@ function ModalsTaoDonNhap({open, onClose, refresh, dataNXB}) {
               const result = await taoDonNhapSachQT(dataToSend);
             //   setDataSach(result.data)
                 if (result.code ===200) {
-                    
+                    setNXB('')
+                    setDataDon([])
                     refresh()
                     handleClose()
                 }
@@ -163,7 +166,7 @@ function ModalsTaoDonNhap({open, onClose, refresh, dataNXB}) {
                             Thêm
                             </button>
                         </div>
-                                    <div className="p-2 px-0 overflow-scroll h-[87vh]">
+                                    <div className="p-2 px-0 min-h-40">
                 <table className="w-full text-left table-auto min-w-max">
                 <thead>
                     <tr>

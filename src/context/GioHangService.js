@@ -74,12 +74,23 @@ export const xoaSach = async (idGioHang) => {
       }
   }
 
+  export const huyDMS = async (data) => {
+    try {
+        const response = await api.post(`${SACH_SERVICE}don-mua-sach/huy-don-mua`, data);
+        // console.log(response.data);
+        return response.data; 
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error; 
+      }
+  }
+
 
   
 export const updateTrangThaiDonMua = async (tt) => {
     const data = {
           "tdn": localStorage.getItem("username"),
-            "trangThai": tt
+            "trangThai": parseInt(tt)
     }
     try {
         const response = await api.post(`${SACH_SERVICE}don-mua-sach/cap-nhat-don-mua`, data);

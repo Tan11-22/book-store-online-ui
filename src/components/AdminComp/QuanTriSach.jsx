@@ -1,21 +1,32 @@
 import React ,{useState, useEffect, useRef}from 'react'
 import ModalsSach from './ModalsSach'
-import { layDSSachQT, layTCNXB, layTCTG, layTCTL } from '../../context/QuanTriSach'
+import { layDSSachQT, layTCNXB, layTCTG, layTCTL, xoaSach } from '../../context/QuanTriSach'
 import ModalsChiTietSach from './ModalsChiTietSach'
 import ReactToPrint from 'react-to-print';
 import ReportToPrint from './ReportToPrint';
+import ModalsCapNhatSach from './ModalsCapNhatSach';
+import Alert from '../Alert/Alert';
+import ConfirmForm from '../Form/ConfirmForm';
 
 function QuanTriSach() {
     // const data = [1,2,3,4,5,6,7,8,9,10]
     const [openModalsSach,setOpenModalsSach] = useState(false)
     const [openModalsCTSach,setOpenModalsCTSach] = useState(false)
     const [dataSachClick,setDataSachClick] = useState()
+    const [sachXoa,setSachXoa] = useState({})
     const [dataSach,setDataSach] = useState([])
     const [dataTG, setDataTG] = useState([])
     const [dataTL, setDataTL] = useState([])
     const [dataNXB, setDataNXB] = useState([])
     const [search, setSearch] = useState('')
     const [refresh, setRefresh] = useState(false)
+
+    const [openAlert, setOpenAlert] = useState(false)
+    const [message, setMessage] = useState('')
+    const [typeAlert, setTypeAlert] = useState('success')
+    const [openConfirmForm, setOpenConfirmForm] = useState(false)
+    const [content, setContent] = useState('')
+    const [reportData, setReportData] = useState(null);
     const handleOpenCTSach = (sach) =>{
         setDataSachClick(sach)
         setOpenModalsCTSach(true)
@@ -28,6 +39,7 @@ function QuanTriSach() {
                 try {
                   const result = await layDSSachQT('');
                   setDataSach(result.data)
+                  setReportData(result.data)
                 } catch (error) {
                   console.log(error)
                 }
@@ -48,6 +60,7 @@ function QuanTriSach() {
                   fetchData(); 
             }
           }
+
     const handleSearch = (event) => {
         event.preventDefault();
         const fetchData = async () => {
@@ -98,7 +111,47 @@ function QuanTriSach() {
               };
               fetchData(); 
         }
-        ,[])   
+        ,[]) 
+    const handleXacNhanXoaSach = (val) => {
+        setSachXoa(val)
+        setContent('Bạn có chắc muốn xoá sách '+ val.tenSach+' không?')
+        setOpenConfirmForm(true)
+    }
+            
+    const handleCancelDeleteSach = () => {
+        setSachXoa({})
+        setOpenConfirmForm(false)
+    }
+            
+    const handleDeleteSach = () => {
+        const fetchData = async () => {
+            try {
+                const result = await xoaSach(
+                    {
+                        'isbn':sachXoa.isbn
+                    }
+                )
+                if(result.code == 200){
+                    setMessage(result.status)
+                    setTypeAlert('success')
+                    setOpenAlert(true)
+                    setRefresh(!refresh)
+                } else {
+                    setMessage(result.status)
+                    setTypeAlert('error')
+                    setOpenAlert(true)
+                }
+                
+            } catch (error) {
+              console.log(error)
+            }
+          }
+        fetchData();            
+            
+            
+        setSachXoa({})
+        setOpenConfirmForm(false)
+    }  
 
   return (
     <div>
@@ -165,9 +218,10 @@ function QuanTriSach() {
 
                             Tạo report</button>}
                         content={() => componentRef.current}
+
                     />
                     <div className='hidden'>
-                    <ReportToPrint ref={componentRef} data={dataSach}/>
+                    <ReportToPrint ref={componentRef} data={reportData}/>
                     </div>
                 </div>
                 </div>
@@ -265,6 +319,20 @@ function QuanTriSach() {
                             </svg>
                         </span>
                         </button>
+                        <button
+                                className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                type="button"
+                        
+                                onClick={()=>handleXacNhanXoaSach(val)}
+                                >
+                                <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000" stroke="#000" strokeWidth="0.5" aria-hidden="true" className="w-4 h-4">
+                                        <path
+                                            d="M9 3a1 1 0 00-1 1v1H4.5a.5.5 0 000 1h.6l1.2 12.5A2.5 2.5 0 008.8 21h6.4a2.5 2.5 0 002.5-2.5L18.9 6h.6a.5.5 0 000-1H16V4a1 1 0 00-1-1H9zm1 2V4h4v1h-4zm-2.4 2h10.8l-1.2 12.5a1.5 1.5 0 01-1.5 1.5H8.8a1.5 1.5 0 01-1.5-1.5L6.6 7z"
+                                        />
+                                    </svg>
+                                </span>
+                                </button>
                     </td>
                                 </tr>
                               )
@@ -279,7 +347,17 @@ function QuanTriSach() {
             </div>
             </div>
             <ModalsSach open={openModalsSach} onClose={()=>setOpenModalsSach(false)} dataTG={dataTG} dataTL={dataTL} dataNXB={dataNXB} refresh={()=>setRefresh(!refresh)}/>
-            <ModalsChiTietSach open={openModalsCTSach} onClose={()=>setOpenModalsCTSach(false)} data={dataSachClick}/>
+            {/* <ModalsChiTietSach open={openModalsCTSach} onClose={()=>setOpenModalsCTSach(false)} data={dataSachClick}/> */}
+            <ModalsCapNhatSach open={openModalsCTSach} onClose={()=>setOpenModalsCTSach(false)} 
+            dataTG={dataTG} dataTL={dataTL} dataNXB={dataNXB} refresh={()=>setRefresh(!refresh)}
+            data={dataSachClick}/>
+             {openAlert && <Alert  message={message} onClose={()=>setOpenAlert(false)} type={typeAlert}/> }
+                <ConfirmForm title={'Xác nhận xoá sách'}
+                    isOpen={openConfirmForm}
+                        content={content}
+                        onClose1={()=>handleCancelDeleteSach()}
+                        onClose2={()=>handleDeleteSach()}
+                />
     </div>
   )
 }

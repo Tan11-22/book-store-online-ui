@@ -42,9 +42,10 @@ function ModalsDoiMatKhau({open, onClose}) {
                     openAlert(result.status)
                     const timer = setTimeout(() => {
                       onClose();
-                        localStorage.removeItem('username')
-                        localStorage.removeItem('token')
-                        localStorage.removeItem('role')
+                        // localStorage.removeItem('username')
+                        // localStorage.removeItem('token')
+                        // localStorage.removeItem('role')
+                        localStorage.clear()
                         navigate("/login")
                     }, 3000); // 3000 milliseconds = 3 seconds
                 

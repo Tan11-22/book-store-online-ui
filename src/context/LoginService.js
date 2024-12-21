@@ -18,15 +18,17 @@ export const dangNhap = async (data) => {
         const token  = response.data.token;
         const username = response.data.username;
         const role = response.data.role;
-        // console.log(token)
+
         localStorage.setItem('token', token); 
         localStorage.setItem("username",username)
         localStorage.setItem("role",role)
+        localStorage.setItem("hoTen",response.data.hoTen)
+        localStorage.setItem("hinhAnh",response.data.hinhAnh)
+        console.log(response.data)
         return response.data;
-    }
-    return true
-      // console.log(response.data);
-      // return response.data; // Trả về dữ liệu từ API
+      }
+      return false
+  
     } catch (error) {
       console.error('Error fetching data:', error);
       throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
@@ -91,3 +93,80 @@ export const doiMatKhau = async (data) => {
       throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
     }
 }
+
+
+
+export const dangNhapGoogle = async (code,scope, authuser, prompt) => {
+  try {
+      const response = await api.post(`${AUTHENCATION_SERVICE}login-google-callback`, {
+        "code":code, "scope": scope, "authuser": authuser, "prompt":prompt
+      });
+      if(response.status === 200) {
+
+        return response.data;
+    }
+    return true
+      // console.log(response.data);
+      // return response.data; // Trả về dữ liệu từ API
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
+    }
+}
+
+export const getURLLoginGoogle = async () => {
+  try {
+      const response = await api.get(`${AUTHENCATION_SERVICE}login-google`);
+
+        return response.data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error; // Ném lỗi để xử lý phía ngoài nếu cần thiết
+    }
+}
+
+export const getDSTaiKhoan = async (type) => {
+  try {
+      const response = await api.get(`${AUTHENCATION_SERVICE}ds-tai-khoan`,
+        {
+          params: {
+            "type": type
+          }
+        }
+      );
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error;
+    }
+}
+
+export const capNhatTTTaiKhoan = async (data) => {
+  try {
+      const response = await api.post(`${AUTHENCATION_SERVICE}cap-nhat-tk`,
+        data
+      );
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error;
+    }
+}
+
+export const taoTaiKhoanNV = async (data) => {
+  try {
+      const response = await api.post(`${AUTHENCATION_SERVICE}tao-tai-khoan-nv`,
+        data
+      );
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error;
+    }
+}
+
+
+

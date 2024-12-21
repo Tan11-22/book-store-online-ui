@@ -2,6 +2,7 @@ import React from 'react'
 import { formatCurrency } from '../../context/utility'
 import { useNavigate } from 'react-router-dom';
 import { themSachVaoGH } from '../../context/SachService';
+import sale from '../assets/sale-tag.png'
 
 function CardSach({data, openAlert, refresh}) {
     const navigate = useNavigate()
@@ -41,6 +42,16 @@ function CardSach({data, openAlert, refresh}) {
     <div className='my-2 '>
          <div className="relative flex flex-col text-black bg-white shadow-md bg-clip-border rounded-xl w-72">
             <div className="relative mx-4 mt-4 overflow-hidden text-black bg-white bg-clip-border rounded-xl h-80 w-auto">
+            {data.giaGiam > 0 ? 
+              // <div className="absolute top-2 right-2">
+              //    {/* bg-red-600 text-white text-xs font-bold px-2 py-1 rounde */}
+              //   <img src={sale} className='w-16'/>
+              // </div>
+              <div className="absolute w-full top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-red-600 to-yellow-700 text-white text-xl font-extrabold text-center px-4 py-2 rounded-lg shadow-lg animate-pulse">
+              <p>Đang giảm giá</p>
+            </div>: <></>
+            }
+                
                 <img
                 src={`http://localhost:8080/api/sach-service/hinh-anh/get?name=${data.tenAnh?data.tenAnh:"default.png"}`}
                 alt="card-image" className="object-cover w-full h-full" />
@@ -56,7 +67,7 @@ function CardSach({data, openAlert, refresh}) {
                     <p className="block font-sans text-base antialiased font-medium leading-relaxed line-through text-blue-gray-900 opacity-55">
                         {formatCurrency(data.giaBan)}
                     </p>
-                    <p className="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+                    <p className="block font-sans text-base antialiased font-medium leading-relaxed text-red-600">
                         {formatCurrency(data.giaGiam)}
                     </p>
                   </>
@@ -88,8 +99,10 @@ function CardSach({data, openAlert, refresh}) {
                 hover:shadow-gray-900/20 block w-full bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none "
                 type="button"
                 onClick={()=> themVaoGioHang(data.isbn,1)}
+                disabled={!data.soLuong>0}
                 >
-                Thêm vào giỏ hàng
+                  {data.soLuong>0?"Thêm vào giỏ hàng":"Đang hết hàng"}
+                
                 </button>
             </div>
             </div>
