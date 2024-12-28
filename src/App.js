@@ -4,12 +4,13 @@ import Navbar from './components/navbar/Navbar';
 import ChiTietSach from './components/ChiTietSach/ChiTietSach';
 import CardSach from './components/CardSach/CardSach';
 import GioHang from './components/GioHang/GioHang';
+import Home from './pages/Home/Home';
 function App() {
   return (
     <div >
-      <Navbar/>
-      <ChiTietSach/>
-      <CardSach/>
+      <Navbar/>   
+      <Home/>
+       <ChiTietSach/>
       <GioHang/>
     </div>
   );
